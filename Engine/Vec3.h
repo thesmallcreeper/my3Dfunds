@@ -28,14 +28,14 @@ class _Vec3 : public _Vec2<T>
 {
 public:
 	_Vec3() {}
-	_Vec3( T x,T y,T z )
+	_Vec3(T x, T y, T z)
 		:
-		_Vec2( x,y ),
-		z( z )
+		_Vec2(x, y),
+		z(z)
 	{}
-	_Vec3( const _Vec3& vect )
+	_Vec3(const _Vec3& vect)
 		:
-		_Vec3( vect.x,vect.y,vect.z )
+		_Vec3(vect.x, vect.y, vect.z)
 	{}
 	template <typename T2>
 	explicit operator _Vec3<T2>() const
@@ -63,6 +63,11 @@ public:
 		_Vec3 norm = *this;
 		norm.Normalize();
 		return norm;
+	}
+	_Vec3	GetReflection(_Vec3 normal)
+	{
+		_Vec3& ray = *this;
+		return normal * (2 * (normal * ray)) - ray;
 	}
 	_Vec3	operator-() const
 	{
@@ -130,6 +135,16 @@ public:
 	{
 		return _Vec3( *this ) /= rhs;
 	}
+	_Vec3	operator [](const int i) {
+		switch (i) {
+		case 1:
+			return x;
+		case 2:
+			return y;
+		case 3:
+			return z;
+		}
+	}
 	bool	operator==( const _Vec3 &rhs ) const
 	{
 		return x == rhs.x && y == rhs.y && rhs.z = z;
@@ -138,6 +153,7 @@ public:
 	{
 		return !(*this == rhs);
 	}
+
 public:
 	T z;
 };

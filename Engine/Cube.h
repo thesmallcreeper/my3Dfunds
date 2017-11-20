@@ -41,7 +41,7 @@ public:
 	template<class V>
 	static IndexedTriangleList<V> GetPlainIndependentFaces( float size = 1.0f )
 	{
-		const float side = size / 2.0f;
+		const float side = 1. / 2.0f;
 
 		std::vector<Vec3> vertices;
 

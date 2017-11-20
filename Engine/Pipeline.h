@@ -5,8 +5,11 @@
 #include "Triangle.h"
 #include "IndexedTriangleList.h"
 #include "PubeScreenTransformer.h"
+#include "PerspectiveTransformer.h"
 #include "Mat3.h"
+#include "ExtendedVertex.h"
 #include "ZBuffer.h"
+#include "ClippingToolkit.h"
 #include <algorithm>
 
 // triangle drawing pipeline with programable
@@ -18,10 +21,12 @@ public:
 	// vertex type used for geometry and throughout pipeline
 	typedef typename Effect::Vertex Vertex;
 public:
-	Pipeline( Graphics& gfx )
+	Pipeline(Graphics& gfx)
 		:
-		gfx( gfx ),
-		zb( gfx.ScreenWidth,gfx.ScreenHeight )
+		gfx(gfx),
+		zb(gfx.ScreenWidth, gfx.ScreenHeight),
+		perspt(-2.31f , 2.31f , -1.3f , 1.3f , -2.0f , -40.0f)
+
 	{}
 	void Draw( IndexedTriangleList<Vertex>& triList )
 	{
@@ -34,6 +39,14 @@ public:
 	void BindTranslation( const Vec3& translation_in )
 	{
 		translation = translation_in;
+	}
+	void BindOrientation(const Mat3& orientation_in) 
+	{
+		orientation = orientation_in;
+	}
+	void BindPosition(const Vec3& position_in)
+	{
+		position = position_in;
 	}
 	// needed to reset the z-buffer after each frame
 	void BeginFrame()
@@ -51,7 +64,7 @@ private:
 		// transform vertices using matrix + vector
 		for( const auto& v : vertices )
 		{
-			verticesOut.emplace_back( v.pos * rotation + translation,v );
+			verticesOut.emplace_back( (v.pos * rotation + translation - position) * orientation, v );
 		}
 
 		// assemble triangles from stream of indices and vertices
@@ -70,8 +83,8 @@ private:
 			const auto& v0 = vertices[indices[i * 3]];
 			const auto& v1 = vertices[indices[i * 3 + 1]];
 			const auto& v2 = vertices[indices[i * 3 + 2]];
-			// cull backfacing triangles with cross product (%) shenanigans
-			if( (v1.pos - v0.pos) % (v2.pos - v0.pos) * v0.pos <= 0.0f )
+			// cull backfacing triangles with cross product (%) shenanigans and check if there are at least partially in front of the viewport
+			if( (v1.pos - v0.pos) % (v2.pos - v0.pos) * v0.pos <= 0.0f && (v0.pos.z <= -2.0f || v1.pos.z <= -2.0f || v2.pos.z <= -2.0f))
 			{
 				// process 3 vertices into a triangle
 				ProcessTriangle( v0,v1,v2 );
@@ -83,14 +96,162 @@ private:
 	// sends generated triangle to post-processing
 	void ProcessTriangle( const Vertex& v0,const Vertex& v1,const Vertex& v2 )
 	{
-		// generate triangle from 3 vertices using gs
-		// and send to post-processing
-		PostProcessTriangleVertices( Triangle<Vertex>{ v0,v1,v2 } );
+		// store v0, v1, v2 at extented vertex that carries 1/z
+		ExtVertex<Vertex> ev0 (v0);
+		ExtVertex<Vertex> ev1 (v1);
+		ExtVertex<Vertex> ev2 (v2);
+
+		// move ev0, ev1, ev2 at the canonical space
+		perspt.Transform(ev0);
+		perspt.Transform(ev1);
+		perspt.Transform(ev2);
+
+		// find where ev0, ev1, ev2 points are now located (inside, on top?..)
+		OutCode ev0C = ClippingOutCode(ev0.Vertex.pos);
+		OutCode ev1C = ClippingOutCode(ev1.Vertex.pos);
+		OutCode ev2C = ClippingOutCode(ev2.Vertex.pos);
+		// triangleOutCode useful to find out the space that the triangle is
+		// vertexsCommonSpace useful to find out if all the triangle is beyond a surface
+		OutCode triangleOutCode = ev0C | ev1C | ev2C;
+		OutCode vertexsCommonSpace = ev0C & ev1C & ev2C;
+
+		if (!triangleOutCode) {
+			ev0.iZtoVertexZ();
+			ev1.iZtoVertexZ();
+			ev2.iZtoVertexZ();
+
+			PostProcessTriangleVertices(Triangle<Vertex>{ ev0.Vertex, ev1.Vertex, ev2.Vertex });
+		}
+		else if (!vertexsCommonSpace) {
+			// Sutherland–Hodgman algorithm optimized to avoid checking surfaces that dont cut the triangle
+
+			std::vector<ExtVertex<Vertex>> input;
+			std::vector<ExtVertex<Vertex>> output;
+
+			output.emplace_back(ev0);
+			output.emplace_back(ev1);
+			output.emplace_back(ev2);
+
+			if (triangleOutCode & LEFTC) {
+				input = output;
+				output.clear();
+				ExtVertex<Vertex> ePrev = input.back();
+				for (const auto& eThis : input)
+				{
+					if (!(ClippingOutCode(eThis.Vertex.pos) & LEFTC))
+					{
+						if (ClippingOutCode(ePrev.Vertex.pos) & LEFTC)
+							output.push_back(ComputeIntersectionLEFT<Vertex>(ePrev, eThis));
+						output.push_back(eThis);
+					}
+					else if (!(ClippingOutCode(ePrev.Vertex.pos) & LEFTC))
+						output.push_back(ComputeIntersectionLEFT<Vertex>(ePrev, eThis));
+					ePrev = eThis;
+				}
+			}
+			if (triangleOutCode & RIGHTC) {
+				input = output;
+				output.clear();
+				ExtVertex<Vertex> ePrev = input.back();
+				for (const auto& eThis : input)
+				{
+					if (!(ClippingOutCode(eThis.Vertex.pos) & RIGHTC))
+					{
+						if (ClippingOutCode(ePrev.Vertex.pos) & RIGHTC)
+							output.push_back(ComputeIntersectionRIGHT<Vertex>(ePrev, eThis));
+						output.push_back(eThis);
+					}
+					else if (!(ClippingOutCode(ePrev.Vertex.pos) & RIGHTC))
+						output.push_back(ComputeIntersectionRIGHT<Vertex>(ePrev, eThis));
+					ePrev = eThis;
+				}
+			}
+			if (triangleOutCode & BOTTOMC) {
+				input = output;
+				output.clear();
+				ExtVertex<Vertex> ePrev = input.back();
+				for (const auto& eThis : input)
+				{
+					if (!(ClippingOutCode(eThis.Vertex.pos) & BOTTOMC))
+					{
+						if (ClippingOutCode(ePrev.Vertex.pos) & BOTTOMC)
+							output.push_back(ComputeIntersectionBOTTOM<Vertex>(ePrev, eThis));
+						output.push_back(eThis);
+					}
+					else if (!(ClippingOutCode(ePrev.Vertex.pos) & BOTTOMC))
+						output.push_back(ComputeIntersectionBOTTOM<Vertex>(ePrev, eThis));
+					ePrev = eThis;
+				}
+			}
+			if (triangleOutCode & TOPC) {
+				input = output;
+				output.clear();
+				ExtVertex<Vertex> ePrev = input.back();
+				for (const auto& eThis : input)
+				{
+					if (!(ClippingOutCode(eThis.Vertex.pos) & TOPC))
+					{
+						if (ClippingOutCode(ePrev.Vertex.pos) & TOPC)
+							output.push_back(ComputeIntersectionTOP<Vertex>(ePrev, eThis));
+						output.push_back(eThis);
+					}
+					else if (!(ClippingOutCode(ePrev.Vertex.pos) & TOPC))
+						output.push_back(ComputeIntersectionTOP<Vertex>(ePrev, eThis));
+					ePrev = eThis;
+				}
+			}
+			if (triangleOutCode & NEARC) {
+				input = output;
+				output.clear();
+				ExtVertex<Vertex> ePrev = input.back();
+				for (const auto& eThis : input)
+				{
+					if (!(ClippingOutCode(eThis.Vertex.pos) & NEARC))
+					{
+						if (ClippingOutCode(ePrev.Vertex.pos) & NEARC)
+							output.push_back(ComputeIntersectionNEAR<Vertex>(ePrev, eThis));
+						output.push_back(eThis);
+					}
+					else if (!(ClippingOutCode(ePrev.Vertex.pos) & NEARC))
+						output.push_back(ComputeIntersectionNEAR<Vertex>(ePrev, eThis));
+					ePrev = eThis;
+				}
+			}
+			if (triangleOutCode & FARC) {
+				input = output;
+				output.clear();
+				ExtVertex<Vertex> ePrev = input.back();
+				for (const auto& eThis : input)
+				{
+					if (!(ClippingOutCode(eThis.Vertex.pos) & FARC))
+					{
+						if (ClippingOutCode(ePrev.Vertex.pos) & FARC)
+							output.push_back(ComputeIntersectionFAR<Vertex>(ePrev, eThis));
+						output.push_back(eThis);
+					}
+					else if (!(ClippingOutCode(ePrev.Vertex.pos) & FARC))
+						output.push_back(ComputeIntersectionFAR<Vertex>(ePrev, eThis));
+					ePrev = eThis;
+				}
+			}
+
+			// at this point at output vector there is a list of the triangles that the main triangle broke down
+
+
+			// prepare Vertexs of ExtVertexs to be send to the next function
+			for (auto& eThis : output)
+				eThis.iZtoVertexZ();
+
+			// send all the triangles that created to render
+			for (int i = 0, end = (int)output.size() - 2; i < end; i++)
+				PostProcessTriangleVertices(Triangle<Vertex>{ output.at(0).Vertex, output.at(i + 1).Vertex, output.at(i + 2).Vertex });
+		}
 	}
 	// vertex post-processing function
 	// perform perspective and viewport transformations
 	void PostProcessTriangleVertices( Triangle<Vertex>& triangle )
 	{
+
 		// perspective divide and screen transform for all 3 vertices
 		pst.Transform( triangle.v0 );
 		pst.Transform( triangle.v1 );
@@ -248,7 +409,10 @@ public:
 private:
 	Graphics& gfx;
 	PubeScreenTransformer pst;
+	PerspectiveTransformer perspt;
 	ZBuffer zb;
 	Mat3 rotation;
 	Vec3 translation;
+	Mat3 orientation = Mat3::Identity();
+	Vec3 position;
 };

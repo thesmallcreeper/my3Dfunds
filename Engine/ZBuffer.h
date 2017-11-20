@@ -6,7 +6,7 @@
 class ZBuffer
 {
 public:
-	ZBuffer( int width,int height )
+	ZBuffer( int width,int height)
 		:
 		width( width ),
 		height( height ),
@@ -24,7 +24,7 @@ public:
 		const int nDepths = width * height;
 		for( int i = 0; i < nDepths; i++ )
 		{
-			pBuffer[i] = std::numeric_limits<float>::infinity();
+			pBuffer[i] = -std::numeric_limits<float>::infinity();
 		}
 	}
 	float& At( int x,int y )
@@ -39,10 +39,11 @@ public:
 	{
 		return const_cast<ZBuffer*>(this)->At( x,y );
 	}
+
 	bool TestAndSet( int x,int y,float depth )
 	{
 		float& depthInBuffer = At( x,y );
-		if( depth < depthInBuffer )
+		if( depth > depthInBuffer )
 		{
 			depthInBuffer = depth;
 			return true;

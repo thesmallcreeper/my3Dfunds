@@ -25,6 +25,9 @@
     <Filter Include="Header Files\Effects">
       <UniqueIdentifier>{acb1ee96-189f-403b-8d65-ba9003995dcf}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\PipelineUtilities">
+      <UniqueIdentifier>{17a122f3-f2a0-4687-be21-8fa30210aa95}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ChiliWin.h">
@@ -81,12 +84,6 @@
     <ClInclude Include="Mat3.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="PubeScreenTransformer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="IndexedTriangleList.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Scene.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -123,8 +120,23 @@
     <ClInclude Include="DoubleCubeScene.h">
       <Filter>Header Files\Scenes</Filter>
     </ClInclude>
+    <ClInclude Include="ClippingToolkit.h">
+      <Filter>Header Files\PipelineUtilities</Filter>
+    </ClInclude>
+    <ClInclude Include="ExtendedVertex.h">
+      <Filter>Header Files\PipelineUtilities</Filter>
+    </ClInclude>
+    <ClInclude Include="IndexedTriangleList.h">
+      <Filter>Header Files\PipelineUtilities</Filter>
+    </ClInclude>
+    <ClInclude Include="PerspectiveTransformer.h">
+      <Filter>Header Files\PipelineUtilities</Filter>
+    </ClInclude>
+    <ClInclude Include="PubeScreenTransformer.h">
+      <Filter>Header Files\PipelineUtilities</Filter>
+    </ClInclude>
     <ClInclude Include="ZBuffer.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\PipelineUtilities</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
