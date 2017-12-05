@@ -15,7 +15,7 @@ public:
 public:
 	CubeSkinScene( Graphics& gfx,const std::wstring& filename )
 		:
-		itlist( Cube::GetSkinned<Vertex>() ),
+		itlist( Cube::GetSkinned<Vertex>(1.0f) ),
 		pipeline( gfx ),
 		Scene( "Textured Cube skinned using texture: " + std::string( filename.begin(),filename.end() ) )
 	{
@@ -136,10 +136,10 @@ public:
 			Mat3::RotationZ(theta_z);
 		Vec3 cameraDir = { +sin(cameraP) * sin(cameraH),  +cos(cameraP)  , +sin(cameraP) * cos(cameraH) };
 		// set pipeline transform
-		pipeline.BindRotation(rot);
-		pipeline.BindTranslation({ offset_x,offset_y,offset_z });
-		pipeline.BindPosition({ positionX,positionY,positionZ });
-		pipeline.BindOrientation(Mat3::ChangeView(cameraDir, { 0.0f,1.0f,0.0f }));
+		pipeline.effect.vs.BindRotation(rot);
+		pipeline.effect.vs.BindTranslation({ offset_x,offset_y,offset_z });
+		pipeline.effect.vs.BindCameraPosition({ positionX,positionY,positionZ });
+		pipeline.effect.vs.BindCameraRotation(Mat3::ChangeView(cameraDir, { 0.0f,1.0f,0.0f }));
 		// render triangles
 		pipeline.Draw(itlist);
 	}

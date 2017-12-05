@@ -41,7 +41,7 @@ template <typename T>
 ExtVertex<T> ComputeIntersectionLEFT(const ExtVertex<T> eA, const ExtVertex<T> eB) {
 	ExtVertex<T> eOut ;
 
-	const float t = (-1 - eA.Vertex.pos.x) / (eB.Vertex.pos.x - eA.Vertex.pos.x);
+	const float t = (-1.0f - eA.Vertex.pos.x) / (eB.Vertex.pos.x - eA.Vertex.pos.x);
 
 	eOut.Vertex = eA.Vertex + (eB.Vertex - eA.Vertex) * t;
 	eOut.Vertex.pos.x = -1.0f;
@@ -55,7 +55,7 @@ template <typename T>
 ExtVertex<T> ComputeIntersectionRIGHT(const ExtVertex<T> eA, const ExtVertex<T> eB) {
 	ExtVertex<T> eOut ;
 
-	const float t = ( 1 - eA.Vertex.pos.x) / (eB.Vertex.pos.x - eA.Vertex.pos.x);
+	const float t = ( 1.0f - eA.Vertex.pos.x) / (eB.Vertex.pos.x - eA.Vertex.pos.x);
 
 	eOut.Vertex = eA.Vertex + (eB.Vertex - eA.Vertex) * t;
 	eOut.Vertex.pos.x = 1.0f;
@@ -69,7 +69,7 @@ template <typename T>
 ExtVertex<T> ComputeIntersectionBOTTOM(const ExtVertex<T> eA, const ExtVertex<T> eB) {
 	ExtVertex<T> eOut;
 
-	const float t = (-1 - eA.Vertex.pos.y) / (eB.Vertex.pos.y - eA.Vertex.pos.y);
+	const float t = (-1.0f - eA.Vertex.pos.y) / (eB.Vertex.pos.y - eA.Vertex.pos.y);
 
 	eOut.Vertex = eA.Vertex + (eB.Vertex - eA.Vertex) * t;
 	eOut.Vertex.pos.y = -1.0f;
@@ -83,7 +83,7 @@ template <typename T>
 ExtVertex<T> ComputeIntersectionTOP(const ExtVertex<T> eA, const ExtVertex<T> eB) {
 	ExtVertex<T> eOut;
 
-	const float t = ( 1 - eA.Vertex.pos.y) / (eB.Vertex.pos.y - eA.Vertex.pos.y);
+	const float t = (1.0f - eA.Vertex.pos.y) / (eB.Vertex.pos.y - eA.Vertex.pos.y);
 
 	eOut.Vertex = eA.Vertex + (eB.Vertex - eA.Vertex) * t;
 	eOut.Vertex.pos.y =  1.0f;
@@ -97,7 +97,7 @@ template <typename T>
 ExtVertex<T> ComputeIntersectionNEAR(const ExtVertex<T> eA, const ExtVertex<T> eB) {
 	ExtVertex<T> eOut;
 
-	const float t = (-1 - eA.Vertex.pos.z) / (eB.Vertex.pos.z - eA.Vertex.pos.z);
+	const float t = (-1.0f - eA.Vertex.pos.z) / (eB.Vertex.pos.z - eA.Vertex.pos.z);
 
 	eOut.Vertex = eA.Vertex + (eB.Vertex - eA.Vertex) * t;
 	eOut.Vertex.pos.z = -1.0f;
@@ -111,7 +111,7 @@ template <typename T>
 ExtVertex<T> ComputeIntersectionFAR(const ExtVertex<T> eA, const ExtVertex<T> eB) {
 	ExtVertex<T> eOut;
 
-	const float t = ( 1 - eA.Vertex.pos.z) / (eB.Vertex.pos.z - eA.Vertex.pos.z);
+	const float t = ( 1.0f - eA.Vertex.pos.z) / (eB.Vertex.pos.z - eA.Vertex.pos.z);
  
 	eOut.Vertex = eA.Vertex + (eB.Vertex - eA.Vertex) * t;
 	eOut.Vertex.pos.z =  1.0f;

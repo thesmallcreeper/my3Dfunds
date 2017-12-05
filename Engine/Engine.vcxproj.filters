@@ -19,13 +19,13 @@
     <Filter Include="Header Files\Scenes">
       <UniqueIdentifier>{f342a8ff-8458-4133-bb03-3921dc7721eb}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Models">
-      <UniqueIdentifier>{43b95830-3b82-4bad-b866-2ca87cb55608}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\Effects">
       <UniqueIdentifier>{acb1ee96-189f-403b-8d65-ba9003995dcf}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\PipelineUtilities">
+    <Filter Include="Header Files\ModelsInput">
+      <UniqueIdentifier>{43b95830-3b82-4bad-b866-2ca87cb55608}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\PipelineTools">
       <UniqueIdentifier>{17a122f3-f2a0-4687-be21-8fa30210aa95}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -91,7 +91,7 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Cube.h">
-      <Filter>Header Files\Models</Filter>
+      <Filter>Header Files\ModelsInput</Filter>
     </ClInclude>
     <ClInclude Include="Pipeline.h">
       <Filter>Header Files</Filter>
@@ -105,38 +105,41 @@
     <ClInclude Include="TextureEffect.h">
       <Filter>Header Files\Effects</Filter>
     </ClInclude>
-    <ClInclude Include="CubeVertexColorScene.h">
-      <Filter>Header Files\Scenes</Filter>
-    </ClInclude>
-    <ClInclude Include="VertexColorEffect.h">
-      <Filter>Header Files\Effects</Filter>
-    </ClInclude>
-    <ClInclude Include="CubeSolidScene.h">
-      <Filter>Header Files\Scenes</Filter>
-    </ClInclude>
-    <ClInclude Include="SolidEffect.h">
-      <Filter>Header Files\Effects</Filter>
-    </ClInclude>
-    <ClInclude Include="DoubleCubeScene.h">
-      <Filter>Header Files\Scenes</Filter>
-    </ClInclude>
     <ClInclude Include="ClippingToolkit.h">
-      <Filter>Header Files\PipelineUtilities</Filter>
+      <Filter>Header Files\PipelineTools</Filter>
     </ClInclude>
     <ClInclude Include="ExtendedVertex.h">
-      <Filter>Header Files\PipelineUtilities</Filter>
+      <Filter>Header Files\PipelineTools</Filter>
     </ClInclude>
     <ClInclude Include="IndexedTriangleList.h">
-      <Filter>Header Files\PipelineUtilities</Filter>
+      <Filter>Header Files\PipelineTools</Filter>
     </ClInclude>
     <ClInclude Include="PerspectiveTransformer.h">
-      <Filter>Header Files\PipelineUtilities</Filter>
+      <Filter>Header Files\PipelineTools</Filter>
     </ClInclude>
     <ClInclude Include="PubeScreenTransformer.h">
-      <Filter>Header Files\PipelineUtilities</Filter>
+      <Filter>Header Files\PipelineTools</Filter>
     </ClInclude>
     <ClInclude Include="ZBuffer.h">
-      <Filter>Header Files\PipelineUtilities</Filter>
+      <Filter>Header Files\PipelineTools</Filter>
+    </ClInclude>
+    <ClInclude Include="VertexWaveScene.h">
+      <Filter>Header Files\Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="WaveVertexTextureEffect.h">
+      <Filter>Header Files\Effects</Filter>
+    </ClInclude>
+    <ClInclude Include="Plane.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CubeSkinFromObjScene.h">
+      <Filter>Header Files\Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="AddObjFileModel.h">
+      <Filter>Header Files\ModelsInput</Filter>
+    </ClInclude>
+    <ClInclude Include="DefaultVertexShader.h">
+      <Filter>Header Files\PipelineTools</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

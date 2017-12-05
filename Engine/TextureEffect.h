@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Pipeline.h"
+#include "DefaultVertexShader.h"
 
 // basic texture effect
 class TextureEffect
@@ -69,6 +70,11 @@ public:
 		Vec3 pos;
 		Vec2 t;
 	};
+
+	// default vs rotates and translates vertices
+	// does not touch attributes
+	typedef DefaultVertexShader<Vertex> VertexShader;
+
 	// invoked for each pixel of a triangle
 	// takes an input of attributes that are the
 	// result of interpolating vertex attributes
@@ -80,8 +86,8 @@ public:
 		Color operator()( const Input& in ) const
 		{
 			return pTex->GetPixel(
-				(unsigned int)std::min( in.t.x * tex_width + 0.5f,tex_xclamp ),
-				(unsigned int)std::min( in.t.y * tex_height + 0.5f,tex_yclamp )
+				std::min((unsigned int)(in.t.x * tex_width + 0.5f) , tex_xclamp ),
+				std::min((unsigned int)(in.t.y * tex_height + 0.5f), tex_yclamp )
 			);
 		}
 		void BindTexture( const std::wstring& filename )
@@ -89,16 +95,17 @@ public:
 			pTex = std::make_unique<Surface>( Surface::FromFile( filename ) );
 			tex_width = float( pTex->GetWidth() );
 			tex_height = float( pTex->GetHeight() );
-			tex_xclamp = tex_width - 1.0f;
-			tex_yclamp = tex_height - 1.0f;
+			tex_xclamp = (unsigned int)(tex_width - 1.0f);
+			tex_yclamp = (unsigned int)(tex_height - 1.0f);
 		}
 	private:
 		std::unique_ptr<Surface> pTex;
 		float tex_width;
 		float tex_height;
-		float tex_xclamp;
-		float tex_yclamp;
+		unsigned int tex_xclamp;
+		unsigned int tex_yclamp;
 	};
 public:
+	VertexShader vs;
 	PixelShader ps;
 };
