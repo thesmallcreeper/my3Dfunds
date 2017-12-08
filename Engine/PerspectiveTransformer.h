@@ -3,6 +3,8 @@
 #include "Mat3.h"
 #include "ExtendedVertex.h"
 
+#include <sstream>
+
 class PerspectiveTransformer
 {
 public:
@@ -12,31 +14,35 @@ public:
 					0				, 0					,  (f + n) / (f - n)};
 
 		persVec = { 0				, 0					, -2 * f * n / (f - n) };
+
+		std::stringstream ss;
+
+		ss	<< "PersMat\n"
+			<< persMat.elements[0][0] << " " << persMat.elements[1][0] << " " << persMat.elements[2][0] << std::endl
+			<< persMat.elements[0][1] << " " << persMat.elements[1][1] << " " << persMat.elements[2][1] << std::endl
+			<< persMat.elements[0][2] << " " << persMat.elements[1][2] << " " << persMat.elements[2][2] << std::endl;
+		ss	<< "PersVec\n"
+			<< persVec.x << " " << persVec.y << " " << persVec.z << std::endl;
+
+		OutputDebugStringA( ss.str().c_str() );
 	}
 
 	template<class ExtVertex>
-	float Transform(ExtVertex& ev) const
+	void TransformMatrix(ExtVertex& ev) const
 	{
-		float zInv;
-
-		//Avoiding the division with 0, sth that might f up the iZ
-		if(fabs(ev.Vertex.pos.z) > 0.0001)
-			zInv = 1.0f / ev.Vertex.pos.z;
-		else {
-			if (ev.Vertex.pos.z > 0)
-				zInv = 1 / 0.0001;
-			else
-				zInv = -1/ 0.0001;
-		}
+		ev.w = ev.Vertex.pos.z;
 
 		ev.Vertex.pos *= persMat;
 		ev.Vertex.pos += persVec;
 
-		ev.Vertex *= zInv;
 
-		ev.iZ = zInv;
+	}
+	template<class ExtVertex>
+	void TransformDivision(ExtVertex& ev) const
+	{
+		ev.iZ = 1.0f / ev.w;
+		ev.Vertex *= ev.iZ;
 
-		return zInv;
 	}
 private:
 	Mat3 persMat;

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cmath>
 #include "Pipeline.h"
 #include "DefaultVertexShader.h"
 
@@ -86,8 +87,8 @@ public:
 		Color operator()( const Input& in ) const
 		{
 			return pTex->GetPixel(
-				std::min((unsigned int)(in.t.x * tex_width + 0.5f) , tex_xclamp ),
-				std::min((unsigned int)(in.t.y * tex_height + 0.5f), tex_yclamp )
+				static_cast <unsigned int> (std::floor(std::min((in.t.x * tex_width + 0.5f) , tex_xclamp ))),
+				static_cast <unsigned int> (std::floor(std::min((in.t.y * tex_height + 0.5f), tex_yclamp )))
 			);
 		}
 		void BindTexture( const std::wstring& filename )
@@ -95,15 +96,15 @@ public:
 			pTex = std::make_unique<Surface>( Surface::FromFile( filename ) );
 			tex_width = float( pTex->GetWidth() );
 			tex_height = float( pTex->GetHeight() );
-			tex_xclamp = (unsigned int)(tex_width - 1.0f);
-			tex_yclamp = (unsigned int)(tex_height - 1.0f);
+			tex_xclamp = (tex_width - 1.0f);
+			tex_yclamp = (tex_height - 1.0f);
 		}
 	private:
 		std::unique_ptr<Surface> pTex;
 		float tex_width;
 		float tex_height;
-		unsigned int tex_xclamp;
-		unsigned int tex_yclamp;
+		float tex_xclamp;
+		float tex_yclamp;
 	};
 public:
 	VertexShader vs;

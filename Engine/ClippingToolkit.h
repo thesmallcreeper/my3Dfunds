@@ -120,3 +120,19 @@ ExtVertex<T> ComputeIntersectionFAR(const ExtVertex<T> eA, const ExtVertex<T> eB
 
 	return eOut;
 }
+
+
+
+template <typename T>
+ExtVertex<T> ComputeIntersectionPLANE(const ExtVertex<T> eA, const ExtVertex<T> eB) {
+	ExtVertex<T> eOut;
+
+	const float t = ( 1.0f - eA.z) / (eB.z - eA.z);
+
+	eOut.Vertex = eA.Vertex + (eB.Vertex - eA.Vertex) * t;
+	eOut.Vertex.pos.z = -1.0f;
+
+	eOut.w = eA.w + t * (eB.w - eA.w);
+
+	return eOut;
+}
