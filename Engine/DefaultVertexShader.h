@@ -22,10 +22,15 @@ public:
 	{
 		camerarotation = camerarotation_in;
 	}
-	Output operator()(const Vertex& in) const
+	void operator()(std::vector<Vertex>& vertices, std::vector<size_t>& indices) const
 	{
-		return{ (in.pos * rotation + translation - position) * camerarotation,in };
+
+			std::transform(vertices.begin(), vertices.end(),
+			vertices.begin(),
+			[&](const auto& lambdain) -> Output {return { (lambdain.pos * rotation + translation - position) * camerarotation, lambdain }; });
+
 	}
+
 private:
 	Mat3 rotation;
 	Mat3 camerarotation;

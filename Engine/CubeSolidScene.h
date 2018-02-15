@@ -15,7 +15,9 @@ public:
 	CubeSolidScene( Graphics& gfx )
 		:
 		itlist( Cube::GetPlainIndependentFaces<Vertex>() ),
-		pipeline( gfx ),
+		zb(gfx.ScreenWidth, gfx.ScreenHeight),
+		sb(gfx.ScreenWidth, gfx.ScreenHeight),
+		pipeline(gfx, zb, sb),
 		Scene( "Colored cube vertex gradient scene" )
 	{
 		const Color colors[] = {
@@ -152,6 +154,9 @@ public:
 private:
 	IndexedTriangleList<Vertex> itlist;
 	Pipeline pipeline;
+	ZBuffer zb;
+	StencilBuffer sb;
+
 	static constexpr float dTheta = PI;
 	float offset_x = +0.0f;
 	float offset_y = +0.0f;

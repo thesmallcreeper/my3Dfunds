@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Pipeline.h"
+#include "DefaultGeometryShader.h"
 
 class WaveVertexTextureEffect
 {
@@ -67,6 +68,7 @@ public:
 		Vec3 pos;
 		Vec2 t;
 	};
+
 	// perturbes vertices in y axis in sin wave based on
 	// x position and time
 	class VertexShader
@@ -90,12 +92,16 @@ public:
 		{
 			camerarotation = camerarotation_in;
 		}
-		Output operator()(const Vertex& in) const
+
+		void operator()(std::vector<Vertex>& vertices, std::vector<size_t>& indices) const
 		{
-			Vec3 pos = (in.pos * rotation + translation - position);
-			pos.y += amplitude * std::sin(time * freqScroll + pos.x * freqWave);
-			return{ pos  * camerarotation,in.t };
+			std::transform(vertices.begin(), vertices.end(),
+				vertices.begin(),
+				[&](const auto& lambdain) -> Output	{	Vec3 pos = (lambdain.pos * rotation + translation - position);
+														pos.y += amplitude * std::sin(time * freqScroll + pos.x * freqWave);
+														return{ pos  * camerarotation,lambdain.t }; });
 		}
+
 		void SetTime(float t)
 		{
 			time = t;
@@ -110,16 +116,20 @@ public:
 		float freqScroll = 5.0f;
 		float amplitude = 0.05f;
 	};
+
+	// default gs passes vertices through and outputs triangle
+	typedef DefaultGeometryShader<VertexShader::Output> GeometryShader;
+
 	// texture clamped ps
 	class PixelShader
 	{
 	public:
 		template<class Input>
-		Color operator()(const Input& in) const
+		Color operator()(const Input& in, const StencilBufferPtr& stencil) const
 		{
 			return pTex->GetPixel(
-				(unsigned int)std::min(in.t.x * tex_width + 0.5f, tex_xclamp),
-				(unsigned int)std::min(in.t.y * tex_height + 0.5f, tex_yclamp)
+				std::min((unsigned int)(in.t.x * tex_width + 0.5f), tex_xclamp),
+				std::min((unsigned int)(in.t.y * tex_height + 0.5f), tex_yclamp)
 			);
 		}
 		void BindTexture(const std::wstring& filename)
@@ -127,17 +137,18 @@ public:
 			pTex = std::make_unique<Surface>(Surface::FromFile(filename));
 			tex_width = float(pTex->GetWidth());
 			tex_height = float(pTex->GetHeight());
-			tex_xclamp = tex_width - 1.0f;
-			tex_yclamp = tex_height - 1.0f;
+			tex_xclamp = (pTex->GetWidth() - 1);
+			tex_yclamp = (pTex->GetHeight() - 1);
 		}
 	private:
 		std::unique_ptr<Surface> pTex;
 		float tex_width;
 		float tex_height;
-		float tex_xclamp;
-		float tex_yclamp;
+		unsigned int tex_xclamp;
+		unsigned int tex_yclamp;
 	};
 public:
 	VertexShader vs;
+	GeometryShader gs;
 	PixelShader ps;
 };

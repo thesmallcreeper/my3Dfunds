@@ -16,7 +16,9 @@ public:
 	CubeSkinScene( Graphics& gfx,const std::wstring& filename )
 		:
 		itlist( Cube::GetSkinned<Vertex>(1.0f) ),
-		pipeline( gfx ),
+		zb(gfx.ScreenWidth, gfx.ScreenHeight),
+		sb(gfx.ScreenWidth, gfx.ScreenHeight),
+		pipeline(gfx, zb, sb),
 		Scene( "Textured Cube skinned using texture: " + std::string( filename.begin(),filename.end() ) )
 	{
 		pipeline.effect.ps.BindTexture( filename );
@@ -146,6 +148,9 @@ public:
 private:
 	IndexedTriangleList<Vertex> itlist;
 	Pipeline pipeline;
+	ZBuffer zb;
+	StencilBuffer sb;
+
 	static constexpr float dTheta = PI;
 	float offset_x = +0.0f;
 	float offset_y = +0.0f;

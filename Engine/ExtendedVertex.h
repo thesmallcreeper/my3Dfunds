@@ -4,48 +4,45 @@ class ExtVertex
 {
 public:
 	V Vertex;
-	float iZ;
+	float w;
 
-	float& x;
-	float& y;
-	float& z;
-	float& w;
+	ExtVertex() = default;
 
-	ExtVertex() : x(Vertex.pos.x), y(Vertex.pos.y), z(Vertex.pos.z), w(iZ) {}
-
-	ExtVertex(V VertexIn) : x(Vertex.pos.x), y(Vertex.pos.y), z(Vertex.pos.z), w(iZ)
+	ExtVertex(V VertexIn)
 	{
 		Vertex = VertexIn;
-		iZ = 1.0f;
+		w = 1.0f;
 	}
 
 	template<class V>
-	ExtVertex(ExtVertex<V> extVertexIn) : x(Vertex.pos.x), y(Vertex.pos.y), z(Vertex.pos.z), w(iZ)
+	ExtVertex(ExtVertex<V> extVertexIn)
 	{
 		Vertex = extVertexIn.Vertex;
-		iZ = extVertexIn.iZ;
+		w = extVertexIn.w;
 	}
 
-	ExtVertex(V VertexIn, float iZIn) : x(Vertex.pos.x), y(Vertex.pos.y), z(Vertex.pos.z), w(iZ)
+	ExtVertex(V VertexIn, float wIn)
 	{
 		Vertex = VertexIn;
-		iZ = iZIn;
-	}
-
-	void operator *= (const float ratio) {
-		Vertex *= ratio;
-		iZ *= ratio;
-	}
-
-	void iZtoVertexZ (){
-		Vertex.pos.z = iZ;
+		w = wIn;
 	}
 
 	ExtVertex&	operator=(const ExtVertex &rhs)
 	{
 		Vertex = rhs.Vertex;
-		iZ = rhs.iZ;
+		w = rhs.w;
 		return *this;
 	}
-	
+
+	void operator *= (const float ratio) 
+	{
+		Vertex *= ratio;
+		w *= ratio;
+	}
+
+	void WtoVertexZ ()
+	{
+		Vertex.pos.z = w;
+	}
+
 };

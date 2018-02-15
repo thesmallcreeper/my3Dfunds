@@ -2,6 +2,7 @@
 
 #include "Pipeline.h"
 #include "DefaultVertexShader.h"
+#include "DefaultGeometryShader.h"
 
 // solid color attribute not interpolated
 class SolidEffect
@@ -71,6 +72,9 @@ public:
 	// does not touch attributes
 	typedef DefaultVertexShader<Vertex> VertexShader;
 
+	// default gs passes vertices through and outputs triangle
+	typedef DefaultGeometryShader<VertexShader::Output> GeometryShader;
+
 	// invoked for each pixel of a triangle
 	// takes an input of attributes that are the
 	// result of interpolating vertex attributes
@@ -79,12 +83,13 @@ public:
 	{
 	public:
 		template<class I>
-		Color operator()( const I& in ) const
+		Color operator()( const I& in, const StencilBufferPtr& stencil) const
 		{
 			return in.color;
 		}
 	};
 public:
 	VertexShader vs;
+	GeometryShader gs;
 	PixelShader ps;
 };

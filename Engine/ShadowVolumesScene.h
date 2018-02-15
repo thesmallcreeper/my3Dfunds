@@ -1,27 +1,36 @@
 #pragma once
 
 #include "Scene.h"
-#include "AddObjFileModel.h"
+#include "AddObjFileModelWithGS.h"
 #include "Mat3.h"
 #include "Pipeline.h"
-#include "TextureEffect.h"
+#include "DrawFrameEffect.h"
+#include "ShadowVolumesEffect1st.h"
+#include "ShadowVolumesEffect2nd.h"
+#include "ZBufferCreationEffect.h"
 
 // scene demonstrating skinned model
-class CubeSkinFromObjScene : public Scene
+class ShadowVolumesScene : public Scene
 {
 public:
-	typedef Pipeline<TextureEffect> Pipeline;
-	typedef Pipeline::Vertex Vertex;
+	typedef Pipeline<ZBufferCreationEffect> PipelineZB;
+	typedef Pipeline<ShadowVolumesEffect1st> PipelineSV1;
+	typedef Pipeline<ShadowVolumesEffect2nd> PipelineSV2;
+	typedef Pipeline<DrawFrameEffect> PipelineDF;
+	typedef DefaultVertex Vertex;
 public:
-	CubeSkinFromObjScene(Graphics& gfx, const std::wstring& odjfilename, const std::wstring& imagefilename , const float scale)
+	ShadowVolumesScene(Graphics& gfx, const std::wstring& odjfilename, const std::wstring& imagefilename, const float scale)
 		:
-		itlist(AddObjFileModel::GetSkinnedFromObjFile<Vertex>(scale, odjfilename)),
+		itlistWithTextures(AddObjFileModelWithGS::GetSkinnedFromObjFileWithGS<Vertex>(scale, odjfilename)),
 		zb(gfx.ScreenWidth, gfx.ScreenHeight),
 		sb(gfx.ScreenWidth, gfx.ScreenHeight),
-		pipeline(gfx, zb, sb),
+		pipelinezb(gfx, zb, sb),
+		pipelinesv1(gfx, zb, sb),
+		pipelinesv2(gfx, zb, sb),
+		pipelinedf(gfx, zb, sb),
 		Scene("Textured Cube skinned using texture: " + std::string(imagefilename.begin(), imagefilename.end()))
 	{
-		pipeline.effect.ps.BindTexture(imagefilename);
+		pipelinedf.effect.ps.BindTexture(imagefilename);
 	}
 	virtual void Update(Keyboard& kbd, Mouse& mouse, float dt) override
 	{
@@ -129,7 +138,7 @@ public:
 	}
 	virtual void Draw() override
 	{
-		pipeline.BeginFrame();
+		pipelinezb.BeginFrame();
 		// generate rotation matrix from euler angles
 		// translation from offset
 		const Mat3 rot =
@@ -137,17 +146,62 @@ public:
 			Mat3::RotationY(theta_y) *
 			Mat3::RotationZ(theta_z);
 		Vec3 cameraDir = { +sin(cameraP) * sin(cameraH),  +cos(cameraP)  , +sin(cameraP) * cos(cameraH) };
-		// set pipeline transform
-		pipeline.effect.vs.BindRotation(rot);
-		pipeline.effect.vs.BindTranslation({ offset_x,offset_y,offset_z });
-		pipeline.effect.vs.BindCameraPosition({ positionX,positionY,positionZ });
-		pipeline.effect.vs.BindCameraRotation(Mat3::ChangeView(cameraDir, { 0.0f,1.0f,0.0f }));
+		// set pipeline transform for pipelineZB
+		pipelinezb.effect.vs.BindRotation(rot);
+		pipelinezb.effect.vs.BindTranslation({ offset_x,offset_y,offset_z });
+		pipelinezb.effect.vs.BindCameraPosition({ positionX,positionY,positionZ });
+		pipelinezb.effect.vs.BindCameraRotation(Mat3::ChangeView(cameraDir, { 0.0f,1.0f,0.0f }));
+		// set pipeline transform and lightsource for pipelineSV1
+		pipelinesv1.effect.vs.BindRotation(rot);
+		pipelinesv1.effect.vs.BindTranslation({ offset_x,offset_y,offset_z });
+		pipelinesv1.effect.vs.BindCameraPosition({ positionX,positionY,positionZ });
+		pipelinesv1.effect.vs.BindCameraRotation(Mat3::ChangeView(cameraDir, { 0.0f,1.0f,0.0f }));
+		pipelinesv1.effect.vs.BindLightSourcePosition({ 0.0f,10.0f,0.0f });
+		// set pipeline transform and lightsource for pipelineSV2
+		pipelinesv2.effect.vs.BindRotation(rot);
+		pipelinesv2.effect.vs.BindTranslation({ offset_x,offset_y,offset_z });
+		pipelinesv2.effect.vs.BindCameraPosition({ positionX,positionY,positionZ });
+		pipelinesv2.effect.vs.BindCameraRotation(Mat3::ChangeView(cameraDir, { 0.0f,1.0f,0.0f }));
+		pipelinesv2.effect.vs.BindLightSourcePosition({ 0.0f,10.0f,0.0f });
+		// set pipeline transform for pipelineDF
+		pipelinedf.effect.vs.BindRotation(rot);
+		pipelinedf.effect.vs.BindTranslation({ offset_x,offset_y,offset_z });
+		pipelinedf.effect.vs.BindCameraPosition({ positionX,positionY,positionZ });
+		pipelinedf.effect.vs.BindCameraRotation(Mat3::ChangeView(cameraDir, { 0.0f,1.0f,0.0f }));
+		// set geometry shader for pipelineDF
+		pipelinedf.effect.gs.BindShader(itlistWithTextures.tc, itlistWithTextures.uvMapping);
 		// render triangles
-		pipeline.Draw(itlist);
+		pipelinezb.switchZBufferSet(true);
+		pipelinezb.switchZBufferEqualTest(false);
+		pipelinezb.switchTurnFacing(false);
+		pipelinezb.switchWriteOnGFX(false);
+		pipelinezb.Draw(itlistWithTextures.itlist);
+
+		pipelinesv1.switchZBufferSet(false);
+		pipelinesv1.switchZBufferEqualTest(false);
+		pipelinesv1.switchTurnFacing(false);
+		pipelinesv1.switchWriteOnGFX(false);				// true for debugging
+		pipelinesv1.Draw(itlistWithTextures.itlist);
+
+		pipelinesv2.switchZBufferSet(false);
+		pipelinesv2.switchZBufferEqualTest(false);
+		pipelinesv2.switchTurnFacing(true);
+		pipelinesv2.switchWriteOnGFX(false);				// true for debugging
+		pipelinesv2.Draw(itlistWithTextures.itlist);
+		
+		pipelinedf.switchZBufferSet(false);
+		pipelinedf.switchZBufferEqualTest(true);
+		pipelinedf.switchTurnFacing(false);
+		pipelinedf.switchWriteOnGFX(true);
+		pipelinedf.Draw(itlistWithTextures.itlist);
 	}
 private:
-	IndexedTriangleList<Vertex> itlist;
-	Pipeline pipeline;
+	IndexedTriangleListWithTC<Vertex> itlistWithTextures;
+	PipelineZB pipelinezb;
+	PipelineSV1 pipelinesv1;
+	PipelineSV1 pipelinesv2;
+	PipelineDF pipelinedf;
+
 	ZBuffer zb;
 	StencilBuffer sb;
 
@@ -169,3 +223,4 @@ private:
 
 	Vei2 mouseLastPosition;
 };
+

@@ -18,7 +18,9 @@ public:
 	VertexWaveScene(Graphics& gfx)
 		:
 		itlist(Plane::GetSkinned<Vertex>(20)),
-		pipeline(gfx),
+		zb(gfx.ScreenWidth, gfx.ScreenHeight),
+		sb(gfx.ScreenWidth, gfx.ScreenHeight),
+		pipeline(gfx, zb, sb),
 		Scene("Test Plane Rippling VS")
 	{
 		pipeline.effect.ps.BindTexture(L"images\\sauron-bhole-100x100.png");
@@ -134,6 +136,9 @@ public:
 private:
 	IndexedTriangleList<Vertex> itlist;
 	Pipeline pipeline;
+	ZBuffer zb;
+	StencilBuffer sb;
+
 	static constexpr float dTheta = PI;
 	float offset_x = +0.0f;
 	float offset_y = +0.0f;

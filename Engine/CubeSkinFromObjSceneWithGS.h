@@ -1,21 +1,21 @@
 #pragma once
 
 #include "Scene.h"
-#include "AddObjFileModel.h"
+#include "AddObjFileModelWithGS.h"
 #include "Mat3.h"
 #include "Pipeline.h"
-#include "TextureEffect.h"
+#include "TextureEffectWithGS.h"
 
 // scene demonstrating skinned model
-class CubeSkinFromObjScene : public Scene
+class CubeSkinFromObjSceneWithGS : public Scene
 {
 public:
-	typedef Pipeline<TextureEffect> Pipeline;
+	typedef Pipeline<TextureEffectWithGS> Pipeline;
 	typedef Pipeline::Vertex Vertex;
 public:
-	CubeSkinFromObjScene(Graphics& gfx, const std::wstring& odjfilename, const std::wstring& imagefilename , const float scale)
+	CubeSkinFromObjSceneWithGS(Graphics& gfx, const std::wstring& odjfilename, const std::wstring& imagefilename, const float scale)
 		:
-		itlist(AddObjFileModel::GetSkinnedFromObjFile<Vertex>(scale, odjfilename)),
+		itlistWithTextures(AddObjFileModelWithGS::GetSkinnedFromObjFileWithGS<Vertex>(scale, odjfilename)),
 		zb(gfx.ScreenWidth, gfx.ScreenHeight),
 		sb(gfx.ScreenWidth, gfx.ScreenHeight),
 		pipeline(gfx, zb, sb),
@@ -142,11 +142,13 @@ public:
 		pipeline.effect.vs.BindTranslation({ offset_x,offset_y,offset_z });
 		pipeline.effect.vs.BindCameraPosition({ positionX,positionY,positionZ });
 		pipeline.effect.vs.BindCameraRotation(Mat3::ChangeView(cameraDir, { 0.0f,1.0f,0.0f }));
+		// set geometry shader
+		pipeline.effect.gs.BindShader(itlistWithTextures.tc, itlistWithTextures.uvMapping);
 		// render triangles
-		pipeline.Draw(itlist);
+		pipeline.Draw(itlistWithTextures.itlist);
 	}
 private:
-	IndexedTriangleList<Vertex> itlist;
+	IndexedTriangleListWithTC<Vertex> itlistWithTextures;
 	Pipeline pipeline;
 	ZBuffer zb;
 	StencilBuffer sb;

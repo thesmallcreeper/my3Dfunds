@@ -6,8 +6,10 @@
 class ZBuffer
 {
 public:
-	ZBuffer( int width,int height)
+	ZBuffer(int width, int height)
 		:
+		enableSet(true),
+		enableEqualTest(false),
 		width( width ),
 		height( height ),
 		pBuffer( new float[width*height] )
@@ -43,13 +45,18 @@ public:
 	bool TestAndSet( int x,int y,float depth )
 	{
 		float& depthInBuffer = At( x,y );
-		if( depth > depthInBuffer )
+		if( depth > depthInBuffer || ((depth == depthInBuffer) && enableEqualTest))
 		{
-			depthInBuffer = depth;
+			if (enableSet == true)
+				depthInBuffer = depth;
 			return true;
 		}
 		return false;
 	}
+
+public:
+	bool enableEqualTest;
+	bool enableSet;
 private:
 	int width;
 	int height;

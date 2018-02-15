@@ -19,14 +19,23 @@
     <Filter Include="Header Files\Scenes">
       <UniqueIdentifier>{f342a8ff-8458-4133-bb03-3921dc7721eb}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Effects">
-      <UniqueIdentifier>{acb1ee96-189f-403b-8d65-ba9003995dcf}</UniqueIdentifier>
+    <Filter Include="Header Files\PipelineTools">
+      <UniqueIdentifier>{17a122f3-f2a0-4687-be21-8fa30210aa95}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\EffectDefaultShaders">
+      <UniqueIdentifier>{d231d8d9-c0ea-41e2-92a5-da6851dc76c9}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header Files\ModelsInput">
       <UniqueIdentifier>{43b95830-3b82-4bad-b866-2ca87cb55608}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\PipelineTools">
-      <UniqueIdentifier>{17a122f3-f2a0-4687-be21-8fa30210aa95}</UniqueIdentifier>
+    <Filter Include="Header Files\Effects">
+      <UniqueIdentifier>{acb1ee96-189f-403b-8d65-ba9003995dcf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Effects\ShadowVolumes">
+      <UniqueIdentifier>{72c533e9-5aef-4d71-9253-b42fa87bb12b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Effects\ShadowVolumes\Effects">
+      <UniqueIdentifier>{b8e5ea4a-a84a-4ec5-abff-caec43e2a363}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -138,8 +147,47 @@
     <ClInclude Include="AddObjFileModel.h">
       <Filter>Header Files\ModelsInput</Filter>
     </ClInclude>
+    <ClInclude Include="CubeSolidScene.h">
+      <Filter>Header Files\Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="SolidEffect.h">
+      <Filter>Header Files\Effects</Filter>
+    </ClInclude>
+    <ClInclude Include="DefaultGeometryShader.h">
+      <Filter>Header Files\EffectDefaultShaders</Filter>
+    </ClInclude>
     <ClInclude Include="DefaultVertexShader.h">
+      <Filter>Header Files\EffectDefaultShaders</Filter>
+    </ClInclude>
+    <ClInclude Include="CubeSkinFromObjSceneWithGS.h">
+      <Filter>Header Files\Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="AddObjFileModelWithGS.h">
+      <Filter>Header Files\ModelsInput</Filter>
+    </ClInclude>
+    <ClInclude Include="TextureEffectWithGS.h">
+      <Filter>Header Files\Effects</Filter>
+    </ClInclude>
+    <ClInclude Include="StencilBuffer.h">
       <Filter>Header Files\PipelineTools</Filter>
+    </ClInclude>
+    <ClInclude Include="ShadowVolumesScene.h">
+      <Filter>Header Files\Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="VertexTypes.h">
+      <Filter>Header Files\Effects\ShadowVolumes</Filter>
+    </ClInclude>
+    <ClInclude Include="ZBufferCreationEffect.h">
+      <Filter>Header Files\Effects\ShadowVolumes\Effects</Filter>
+    </ClInclude>
+    <ClInclude Include="DrawFrameEffect.h">
+      <Filter>Header Files\Effects\ShadowVolumes\Effects</Filter>
+    </ClInclude>
+    <ClInclude Include="ShadowVolumesEffect2nd.h">
+      <Filter>Header Files\Effects\ShadowVolumes\Effects</Filter>
+    </ClInclude>
+    <ClInclude Include="ShadowVolumesEffect1st.h">
+      <Filter>Header Files\Effects\ShadowVolumes\Effects</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

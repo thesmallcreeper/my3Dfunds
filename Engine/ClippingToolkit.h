@@ -3,15 +3,20 @@
 #include "Mat3.h"
 #include "ExtendedVertex.h"
 
-typedef int OutCode;
+#include <limits>
 
-const int INSIDEC = 0;		// 000000
-const int LEFTC = 1;		// 000001
-const int RIGHTC = 2;		// 000010
-const int BOTTOMC = 4;		// 000100
-const int TOPC = 8;			// 001000
-const int NEARC = 16;		// 010000
-const int FARC = 32;		// 100000
+typedef unsigned int OutCode;
+const OutCode trueAll = std::numeric_limits<OutCode>::max();
+
+const OutCode INSIDEC = 0;		// 000000
+const OutCode LEFTC = 1;		// 000001
+const OutCode RIGHTC = 2;		// 000010
+const OutCode BOTTOMC = 4;		// 000100
+const OutCode TOPC = 8;			// 001000
+const OutCode NEARC = 16;		// 010000
+const OutCode FARC = 32;		// 100000
+
+const OutCode checkAllButNear = 47;	//101111
 
 OutCode ClippingOutCode(const Vec3& point)
 {
@@ -46,7 +51,7 @@ ExtVertex<T> ComputeIntersectionLEFT(const ExtVertex<T> eA, const ExtVertex<T> e
 	eOut.Vertex = eA.Vertex + (eB.Vertex - eA.Vertex) * t;
 	eOut.Vertex.pos.x = -1.0f;
 
-	eOut.iZ = eA.iZ + t * (eB.iZ - eA.iZ);
+	eOut.w = eA.w + t * (eB.w - eA.w);
 
 	return eOut;
 }
@@ -60,7 +65,7 @@ ExtVertex<T> ComputeIntersectionRIGHT(const ExtVertex<T> eA, const ExtVertex<T> 
 	eOut.Vertex = eA.Vertex + (eB.Vertex - eA.Vertex) * t;
 	eOut.Vertex.pos.x = 1.0f;
 
-	eOut.iZ = eA.iZ + t * (eB.iZ - eA.iZ);
+	eOut.w = eA.w + t * (eB.w - eA.w);
 
 	return eOut;
 }
@@ -74,7 +79,7 @@ ExtVertex<T> ComputeIntersectionBOTTOM(const ExtVertex<T> eA, const ExtVertex<T>
 	eOut.Vertex = eA.Vertex + (eB.Vertex - eA.Vertex) * t;
 	eOut.Vertex.pos.y = -1.0f;
 
-	eOut.iZ = eA.iZ + t * (eB.iZ - eA.iZ);
+	eOut.w = eA.w + t * (eB.w - eA.w);
 
 	return eOut;
 }
@@ -88,7 +93,7 @@ ExtVertex<T> ComputeIntersectionTOP(const ExtVertex<T> eA, const ExtVertex<T> eB
 	eOut.Vertex = eA.Vertex + (eB.Vertex - eA.Vertex) * t;
 	eOut.Vertex.pos.y =  1.0f;
 
-	eOut.iZ = eA.iZ + t * (eB.iZ - eA.iZ);
+	eOut.w = eA.w + t * (eB.w - eA.w);
 
 	return eOut;
 }
@@ -102,7 +107,7 @@ ExtVertex<T> ComputeIntersectionNEAR(const ExtVertex<T> eA, const ExtVertex<T> e
 	eOut.Vertex = eA.Vertex + (eB.Vertex - eA.Vertex) * t;
 	eOut.Vertex.pos.z = -1.0f;
 
-	eOut.iZ = eA.iZ + t * (eB.iZ - eA.iZ);
+	eOut.w = eA.w + t * (eB.w - eA.w);
 
 	return eOut;
 }
@@ -116,7 +121,7 @@ ExtVertex<T> ComputeIntersectionFAR(const ExtVertex<T> eA, const ExtVertex<T> eB
 	eOut.Vertex = eA.Vertex + (eB.Vertex - eA.Vertex) * t;
 	eOut.Vertex.pos.z =  1.0f;
 
-	eOut.iZ = eA.iZ + t * (eB.iZ - eA.iZ);
+	eOut.w = eA.w + t * (eB.w - eA.w);
 
 	return eOut;
 }
@@ -127,7 +132,7 @@ template <typename T>
 ExtVertex<T> ComputeIntersectionPLANE(const ExtVertex<T> eA, const ExtVertex<T> eB) {
 	ExtVertex<T> eOut;
 
-	const float t = ( 1.0f - eA.z) / (eB.z - eA.z);
+	const float t = ( 1.0f - eA.Vertex.pos.z) / (eB.Vertex.pos.z - eA.Vertex.pos.z);
 
 	eOut.Vertex = eA.Vertex + (eB.Vertex - eA.Vertex) * t;
 	eOut.Vertex.pos.z = -1.0f;
