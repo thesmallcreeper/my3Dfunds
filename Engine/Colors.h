@@ -21,6 +21,7 @@
 #pragma once
 
 #include "Vec3.h"
+#include <cmath>
 
 class Color
 {
@@ -60,6 +61,18 @@ public:
 	{
 		dword = color.dword;
 		return *this;
+	}
+	Color operator / (float div)
+	{
+		unsigned __int8 r = (dword >> 16)	& 0x0000FF;
+		unsigned __int8 g = (dword >> 8)	& 0x0000FF;
+		unsigned __int8 b = (dword >> 0)	& 0x0000FF;
+
+		unsigned __int8 nr = (unsigned __int8) std::floor(r / div);
+		unsigned __int8 ng = (unsigned __int8) std::floor(g / div);
+		unsigned __int8 nb = (unsigned __int8) std::floor(b / div);
+		
+		return (nr << 16) | (ng << 8) | nb;
 	}
 	constexpr unsigned char GetX() const
 	{

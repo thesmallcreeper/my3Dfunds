@@ -57,13 +57,14 @@ public:
 		template<class Input>
 		Color operator()(const Input& in, StencilBufferPtr& stencil) const
 		{
+			Color colorTex = pTex->GetPixel(
+								std::min((unsigned int)(in.t.x * tex_width + 0.5f), tex_xclamp),
+								std::min((unsigned int)(in.t.y * tex_height + 0.5f), tex_yclamp)
+							);
 			if (stencil.get())
-				return pTex->GetPixel(
-					std::min((unsigned int)(in.t.x * tex_width + 0.5f), tex_xclamp),
-					std::min((unsigned int)(in.t.y * tex_height + 0.5f), tex_yclamp)
-				);
+				return colorTex;
 			else
-				return Colors::Gray;
+				return colorTex / 3.f;
 		}
 		void BindTexture(const std::wstring& filename)
 		{

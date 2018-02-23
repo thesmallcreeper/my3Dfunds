@@ -3492,7 +3492,7 @@ void WINAPI DXGetErrorDescriptionW( _In_ HRESULT hr, _Out_cap_(count) WCHAR* des
         CHK_ERR(DDERR_NOT8BITCOLOR, "DirectDraw Surface is not in 8 bit color mode and the requested operation requires 8 bit color.")
         CHK_ERR(DDERR_NOTEXTUREHW, "Operation could not be carried out because there is no texture mapping hardware present or available.")
         CHK_ERR(DDERR_NOVSYNCHW, "Operation could not be carried out because there is no hardware support for vertical blank synchronized operations.")
-        CHK_ERR(DDERR_NOZBUFFERHW, "Operation could not be carried out because there is no hardware support for zbuffer blting.")
+        CHK_ERR(DDERR_NOZBUFFERHW, "Operation could not be carried out because there is no hardware support for WBuffer blting.")
         CHK_ERR(DDERR_NOZOVERLAYHW, "Overlay surfaces could not be z layered based on their BltOrder because the hardware does not support z layering of overlays.")
         CHK_ERR(DDERR_OUTOFCAPS, "The hardware needed for the requested operation has already been allocated.")
 //        CHK_ERR(DDERR_OUTOFMEMORY, "DDERR_OUTOFMEMORY")

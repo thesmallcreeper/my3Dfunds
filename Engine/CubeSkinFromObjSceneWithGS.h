@@ -150,7 +150,7 @@ public:
 private:
 	IndexedTriangleListWithTC<Vertex> itlistWithTextures;
 	Pipeline pipeline;
-	ZBuffer zb;
+	WBuffer zb;
 	StencilBuffer sb;
 
 	static constexpr float dTheta = PI;

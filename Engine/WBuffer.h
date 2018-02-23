@@ -3,10 +3,10 @@
 #include <limits>
 #include <cassert>
 
-class ZBuffer
+class WBuffer
 {
 public:
-	ZBuffer(int width, int height)
+	WBuffer(int width, int height)
 		:
 		enableSet(true),
 		enableEqualTest(false),
@@ -14,38 +14,35 @@ public:
 		height( height ),
 		pBuffer( new float[width*height] )
 	{}
-	~ZBuffer()
+	~WBuffer()
 	{
 		delete[] pBuffer;
 		pBuffer = nullptr;
 	}
-	ZBuffer( const ZBuffer& ) = delete;
-	ZBuffer& operator=( const ZBuffer& ) = delete;
+	WBuffer( const WBuffer& ) = delete;
+	WBuffer& operator=( const WBuffer& ) = delete;
 	void Clear()
 	{
 		const int nDepths = width * height;
-		for( int i = 0; i < nDepths; i++ )
-		{
-			pBuffer[i] = -std::numeric_limits<float>::infinity();
-		}
+		memset(pBuffer, 0, nDepths * sizeof(float));
 	}
 	float& At( int x,int y )
 	{
-		assert( x >= 0 );
-		assert( x < width );
-		assert( y >= 0 );
-		assert( y < height );
+	//	assert( x >= 0 );
+	//	assert( x < width );
+	//	assert( y >= 0 );
+	//	assert( y < height );
 		return pBuffer[y * width + x];
 	}
 	const float& At( int x,int y ) const
 	{
-		return const_cast<ZBuffer*>(this)->At( x,y );
+		return const_cast<WBuffer*>(this)->At( x,y );
 	}
 
 	bool TestAndSet( int x,int y,float depth )
 	{
 		float& depthInBuffer = At( x,y );
-		if( depth > depthInBuffer || ((depth == depthInBuffer) && enableEqualTest))
+		if( depth < depthInBuffer || ((depth == depthInBuffer) && enableEqualTest))
 		{
 			if (enableSet == true)
 				depthInBuffer = depth;

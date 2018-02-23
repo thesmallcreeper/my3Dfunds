@@ -96,6 +96,7 @@
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <EnableEnhancedInstructionSet>AdvancedVectorExtensions</EnableEnhancedInstructionSet>
+      <EnableParallelCodeGeneration>true</EnableParallelCodeGeneration>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -132,6 +133,7 @@
       <BufferSecurityCheck>false</BufferSecurityCheck>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <EnableEnhancedInstructionSet>AdvancedVectorExtensions</EnableEnhancedInstructionSet>
+      <EnableParallelCodeGeneration>true</EnableParallelCodeGeneration>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -176,6 +178,7 @@
     <ClInclude Include="ShadowVolumesEffect1st.h" />
     <ClInclude Include="ShadowVolumesEffect2nd.h" />
     <ClInclude Include="ShadowVolumesScene.h" />
+    <ClInclude Include="ShadowVolumesVertexShader.h" />
     <ClInclude Include="SolidEffect.h" />
     <ClInclude Include="StencilBuffer.h" />
     <ClInclude Include="Surface.h" />
@@ -187,7 +190,7 @@
     <ClInclude Include="VertexTypes.h" />
     <ClInclude Include="VertexWaveScene.h" />
     <ClInclude Include="WaveVertexTextureEffect.h" />
-    <ClInclude Include="ZBuffer.h" />
+    <ClInclude Include="WBuffer.h" />
     <ClInclude Include="ZBufferCreationEffect.h" />
   </ItemGroup>
   <ItemGroup>

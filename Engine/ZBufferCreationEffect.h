@@ -40,7 +40,7 @@ public:
 		template<class Input>
 		Color operator()(const Input& in, StencilBufferPtr& stencil) const
 		{
-			return Colors::Black;
+			return Colors::White;
 		}	
 	};
 public:

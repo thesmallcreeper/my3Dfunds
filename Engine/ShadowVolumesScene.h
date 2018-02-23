@@ -199,10 +199,10 @@ private:
 	IndexedTriangleListWithTC<Vertex> itlistWithTextures;
 	PipelineZB pipelinezb;
 	PipelineSV1 pipelinesv1;
-	PipelineSV1 pipelinesv2;
+	PipelineSV2 pipelinesv2;
 	PipelineDF pipelinedf;
 
-	ZBuffer zb;
+	WBuffer zb;
 	StencilBuffer sb;
 
 	static constexpr float dTheta = PI;

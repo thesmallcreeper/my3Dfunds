@@ -9,7 +9,7 @@ public:
 		:
 		width(width),
 		height(height),
-		pBuffer(new unsigned __int16[width*height])
+		pBuffer(new __int16[width*height])
 	{}
 	~StencilBuffer()
 	{
@@ -21,40 +21,37 @@ public:
 	void Clear()
 	{
 		const int nStencils = width * height;
-		for (int i = 0; i < nStencils; i++)
-		{
-			pBuffer[i] = 0;
-		}
+		memset(pBuffer, 0, nStencils * sizeof(__int16));
 	}
 	bool At(int x, int y)
 	{
-		assert(x >= 0);
-		assert(x < width);
-		assert(y >= 0);
-		assert(y < height);
+	//	assert(x >= 0);
+	//	assert(x < width);
+	//	assert(y >= 0);
+	//	assert(y < height);
 		return !(pBuffer[y * width + x]);
 	}
 	void increaseStencilAt(int x, int y)
 	{
-		assert(x >= 0);
-		assert(x < width);
-		assert(y >= 0);
-		assert(y < height);
+	//	assert(x >= 0);
+	//	assert(x < width);
+	//	assert(y >= 0);
+	//	assert(y < height);
 		pBuffer[y * width + x]++;
 	}
 	void decreaseStencilAt(int x, int y)
 	{
-		assert(x >= 0);
-		assert(x < width);
-		assert(y >= 0);
-		assert(y < height);
+	//	assert(x >= 0);
+	//	assert(x < width);
+	//	assert(y >= 0);
+	//	assert(y < height);
 		pBuffer[y * width + x]--;
 	}
 
 private:
 	int width;
 	int height;
-	unsigned __int16* pBuffer = nullptr;
+	__int16* pBuffer = nullptr;
 };
 
 class StencilBufferPtr 

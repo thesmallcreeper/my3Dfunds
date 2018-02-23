@@ -8,7 +8,7 @@
 #include "PerspectiveTransformer.h"
 #include "Mat3.h"
 #include "ExtendedVertex.h"
-#include "ZBuffer.h"
+#include "WBuffer.h"
 #include "StencilBuffer.h"
 #include "ClippingToolkit.h"
 #include <algorithm>
@@ -24,7 +24,7 @@ public:
 	typedef typename Effect::VertexShader::Output VSOut;
 	typedef typename Effect::GeometryShader::Output GSOut;
 public:
-	Pipeline(Graphics& gfx, ZBuffer& zb, StencilBuffer& sb)
+	Pipeline(Graphics& gfx, WBuffer& zb, StencilBuffer& sb)
 		:
 		gfx(gfx),
 		zb(zb),
@@ -399,12 +399,12 @@ private:
 
 			for( int x = xStart; x < xEnd; x++,iLine += diLine )
 			{
-				// recover interpolated z from interpolated 1/z
-				const float z = 1.0f / iLine.pos.z;
-				// do z rejection / update of z buffer
-				// skip shading step if z rejected (early z)
-				if( zb.TestAndSet( x,y,z ) )
+				// do w rejection / update of w buffer
+				// skip shading step if w rejected (early w)
+				if( zb.TestAndSet( x,y, iLine.pos.z) )
 				{
+					// recover z from 1/w
+					const float z = 1.0f / iLine.pos.z;
 					// recover interpolated attributes
 					// (wasted effort in multiplying pos (x,y,z) here, but
 					//  not a huge deal, not worth the code complication to fix)
@@ -424,7 +424,7 @@ public:
 	Effect effect;
 private:
 	Graphics& gfx;
-	ZBuffer& zb;
+	WBuffer& zb;
 	StencilBuffer& sb;
 	PubeScreenTransformer pst;
 	PerspectiveTransformer perspt;
