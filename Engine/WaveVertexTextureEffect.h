@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Pipeline.h"
+#include "IndexedTriangleList.h"
 #include "DefaultGeometryShader.h"
 
 class WaveVertexTextureEffect
@@ -93,13 +94,18 @@ public:
 			camerarotation = camerarotation_in;
 		}
 
-		void operator()(std::vector<Vertex>& vertices, std::vector<size_t>& indices) const
+		IndexedTriangleList<Output> operator()(const std::vector<Vertex>& vertices, const std::vector<size_t>& indices) const
 		{
+			IndexedTriangleList<Output> out;
+			out.indices = indices;
+
 			std::transform(vertices.begin(), vertices.end(),
-				vertices.begin(),
+				out.vertices.begin(),
 				[&](const auto& lambdain) -> Output	{	Vec3 pos = (lambdain.pos * rotation + translation - position);
 														pos.y += amplitude * std::sin(time * freqScroll + pos.x * freqWave);
 														return{ pos  * camerarotation,lambdain.t }; });
+
+			return out;
 		}
 
 		void SetTime(float t)

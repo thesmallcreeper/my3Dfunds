@@ -4,22 +4,22 @@
 #include "AddObjFileModelWithGS.h"
 #include "Mat3.h"
 #include "Pipeline.h"
-#include "DrawFrameEffect.h"
+#include "DrawFrameWithPhongLightEffect.h"
 #include "ShadowVolumesEffect1st.h"
 #include "ShadowVolumesEffect2nd.h"
 #include "WBufferCreationEffect.h"
 
 // scene demonstrating skinned model
-class ShadowVolumesScene : public Scene
+class ShadowVolumesWithLightingScene : public Scene
 {
 public:
 	typedef Pipeline<WBufferCreationEffect> PipelineWB;
 	typedef Pipeline<ShadowVolumesEffect1st> PipelineSV1;
 	typedef Pipeline<ShadowVolumesEffect2nd> PipelineSV2;
-	typedef Pipeline<DrawFrameEffect> PipelineDF;
+	typedef Pipeline<DrawFrameWithPhongLight> PipelineDF;
 	typedef DefaultVertex Vertex;
 public:
-	ShadowVolumesScene(Graphics& gfx, const std::wstring& odjfilename, const std::wstring& imagefilename, const float scale)
+	ShadowVolumesWithLightingScene(Graphics& gfx, const std::wstring& odjfilename, const std::wstring& imagefilename, const float scale)
 		:
 		itlistWithTextures(AddObjFileModelWithGS::GetSkinnedFromObjFileWithGS<Vertex>(scale, odjfilename)),
 		zb(gfx.ScreenWidth, gfx.ScreenHeight),
@@ -163,13 +163,18 @@ public:
 		pipelinesv2.effect.vs.BindCameraPosition({ positionX,positionY,positionZ });
 		pipelinesv2.effect.vs.BindCameraRotation(Mat3::ChangeView(cameraDir, { 0.0f,1.0f,0.0f }));
 		pipelinesv2.effect.vs.BindLightSourcePosition({ 0.0f,10.0f,0.0f });
-		// set pipeline transform for pipelineDF
+		// set pipeline transform and lightsource for pipelineDF
 		pipelinedf.effect.vs.BindRotation(rot);
 		pipelinedf.effect.vs.BindTranslation({ offset_x,offset_y,offset_z });
 		pipelinedf.effect.vs.BindCameraPosition({ positionX,positionY,positionZ });
 		pipelinedf.effect.vs.BindCameraRotation(Mat3::ChangeView(cameraDir, { 0.0f,1.0f,0.0f }));
+		pipelinedf.effect.vs.BindLightSourcePosition({ 0.0f,10.0f,0.0f });
 		// set geometry shader for pipelineDF
 		pipelinedf.effect.gs.BindShader(itlistWithTextures.tc, itlistWithTextures.uvMapping);
+		// set pixel shade for pipelineDF
+		pipelinedf.effect.ps.BindLightSourcePosition({ 0.0f,10.0f,0.0f });
+		pipelinedf.effect.ps.BindLightSourceDesnity(120.f);
+		pipelinedf.effect.ps.BindAmbientLight(0.275f);
 		// render triangles
 		pipelinewb.switchZBufferSet(true);
 		pipelinewb.switchZBufferEqualTest(false);
@@ -188,7 +193,7 @@ public:
 		pipelinesv2.switchTurnFacing(true);
 		pipelinesv2.switchWriteOnGFX(false);				// true for debugging
 		pipelinesv2.Draw(itlistWithTextures.itlist);
-		
+
 		pipelinedf.switchZBufferSet(false);
 		pipelinedf.switchZBufferEqualTest(true);
 		pipelinedf.switchTurnFacing(false);
@@ -223,4 +228,5 @@ private:
 
 	Vei2 mouseLastPosition;
 };
+
 

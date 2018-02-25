@@ -1,5 +1,7 @@
 #pragma once
 
+#include "IndexedTriangleList.h"
+
 template<class Vertex>
 class ShadowVolumesVertexShader
 {
@@ -27,8 +29,10 @@ public:
 		lightsourceposition = lightsourceposition_in;
 	}
 
-	void operator()(std::vector<Vertex>& vertices_in, std::vector<size_t>& indices_in) const
+	IndexedTriangleList<Output> operator()(std::vector<Vertex> vertices_in,std::vector<size_t> indices_in) const
 	{
+		std::vector<Output> vertices_out;
+
 		std::transform(vertices_in.begin(), vertices_in.end(),
 			vertices_in.begin(),
 			[&](const auto& lambdain) -> Vertex {return { (lambdain.pos * rotation + translation - position) * camerarotation, lambdain }; });
@@ -45,13 +49,11 @@ public:
 		{
 			Vec3 direction(lambdain.pos.x - lightsourceposition_use.x, lambdain.pos.y - lightsourceposition_use.y, lambdain.pos.z - lightsourceposition_use.z);
 			direction.Normalize();
-			Vertex result(direction * 128 + lightsourceposition_use);
+			Vertex result(direction * 64 + lightsourceposition_use);
 			return result;
 		});
 
-		std::vector<Output> vertices_out;
 		vertices_out.reserve(vertices_in.size() * 2);
-
 		for (size_t i = 0; i < vertices_in.size() * 2; i++)
 		{
 			if (i % 2 == 0)
@@ -61,6 +63,8 @@ public:
 		}
 
 		// Create vertices_codes
+		std::vector<size_t> indices_out;
+
 		unsigned __int8* vertices_codes = new unsigned __int8[vertices_in.size()];
 		memset(vertices_codes, 0, vertices_in.size());
 
@@ -69,7 +73,7 @@ public:
 
 		for (size_t i = 0; i < indices_in.size() / 3; i++)
 		{
-			Vec3 faceNormal = ((vertices_in[indices_in[i * 3 + 1]].pos - vertices_in[indices_in[i * 3]].pos).GetNormalized() % (vertices_in[indices_in[i * 3 + 2]].pos - vertices_in[indices_in[i * 3]].pos).GetNormalized()).GetNormalized();
+			Vec3 faceNormal = ((vertices_in[indices_in[i * 3 + 1]].pos - vertices_in[indices_in[i * 3]].pos) % (vertices_in[indices_in[i * 3 + 2]].pos - vertices_in[indices_in[i * 3]].pos)).GetNormalized();
 			Vec3 lightToFace = (lightsourceposition_use - vertices_in[indices_in[i * 3]].pos).GetNormalized();
 
 			if (faceNormal * lightToFace >= 0.0f)
@@ -84,11 +88,9 @@ public:
 				vertices_codes[indices_in[i * 3]] |= 0b00000010;
 				vertices_codes[indices_in[i * 3 + 1]] |= 0b00000010;
 				vertices_codes[indices_in[i * 3 + 2]] |= 0b00000010;
-				triangles_codes[i] = false;
 			}
 		}
 
-		std::vector<size_t> indices_out;
 		for (size_t i = 0; i < indices_in.size(); i++)
 		{
 			if (vertices_codes[indices_in[i]] == 0b00000011 && triangles_codes[i / 3] == true)
@@ -123,9 +125,8 @@ public:
 			}
 		}
 
-		vertices_in = std::move(vertices_out);
-		indices_in = std::move(indices_out);
-
+		IndexedTriangleList<Output> out(vertices_out, indices_out);
+		return out;
 	}
 
 private:

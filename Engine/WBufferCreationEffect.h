@@ -6,7 +6,7 @@
 #include "VertexTypes.h"
 
 // basic texture effect
-class ZBufferCreationEffect
+class WBufferCreationEffect
 {
 public:
 	typedef DefaultVertex Vertex;

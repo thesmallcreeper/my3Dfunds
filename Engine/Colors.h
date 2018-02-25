@@ -62,17 +62,13 @@ public:
 		dword = color.dword;
 		return *this;
 	}
-	Color operator / (float div)
+	Color  operator *( unsigned __int8 alpha )
 	{
-		unsigned __int8 r = (dword >> 16)	& 0x0000FF;
-		unsigned __int8 g = (dword >> 8)	& 0x0000FF;
-		unsigned __int8 b = (dword >> 0)	& 0x0000FF;
-
-		unsigned __int8 nr = (unsigned __int8) std::floor(r / div);
-		unsigned __int8 ng = (unsigned __int8) std::floor(g / div);
-		unsigned __int8 nb = (unsigned __int8) std::floor(b / div);
+		unsigned __int8 r = ( ( (dword >> 16) & 0xFF) * alpha) >> 8;
+		unsigned __int8 g = ( ( (dword >> 8 ) & 0xFF) * alpha) >> 8;
+		unsigned __int8 b = ( ( (dword      ) & 0xFF) * alpha) >> 8;
 		
-		return (nr << 16) | (ng << 8) | nb;
+		return (r << 16) | (g << 8) | b;
 	}
 	constexpr unsigned char GetX() const
 	{

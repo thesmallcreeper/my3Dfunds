@@ -40,7 +40,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
@@ -68,7 +68,9 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <PropertyGroup />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <GenerateManifest>true</GenerateManifest>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
@@ -93,11 +95,17 @@
       <FloatingPointModel>Fast</FloatingPointModel>
       <CallingConvention>VectorCall</CallingConvention>
       <MinimalRebuild>false</MinimalRebuild>
-      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <EnableEnhancedInstructionSet>AdvancedVectorExtensions</EnableEnhancedInstructionSet>
       <EnableParallelCodeGeneration>true</EnableParallelCodeGeneration>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
     </ClCompile>
+    <Link>
+      <AllowIsolation>true</AllowIsolation>
+      <IgnoreEmbeddedIDL>false</IgnoreEmbeddedIDL>
+      <GenerateDebugInformation>DebugFastLink</GenerateDebugInformation>
+    </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -154,6 +162,7 @@
     <ClInclude Include="DefaultGeometryShader.h" />
     <ClInclude Include="DefaultVertexShader.h" />
     <ClInclude Include="DrawFrameEffect.h" />
+    <ClInclude Include="DrawFrameWithPhongLightEffect.h" />
     <ClInclude Include="DXErr.h" />
     <ClInclude Include="ExtendedVertex.h" />
     <ClInclude Include="FrameTimer.h" />
@@ -179,6 +188,7 @@
     <ClInclude Include="ShadowVolumesEffect2nd.h" />
     <ClInclude Include="ShadowVolumesScene.h" />
     <ClInclude Include="ShadowVolumesVertexShader.h" />
+    <ClInclude Include="ShadowVolumesWithLightingScene.h" />
     <ClInclude Include="SolidEffect.h" />
     <ClInclude Include="StencilBuffer.h" />
     <ClInclude Include="Surface.h" />
@@ -188,10 +198,8 @@
     <ClInclude Include="Vec2.h" />
     <ClInclude Include="Vec3.h" />
     <ClInclude Include="VertexTypes.h" />
-    <ClInclude Include="VertexWaveScene.h" />
-    <ClInclude Include="WaveVertexTextureEffect.h" />
     <ClInclude Include="WBuffer.h" />
-    <ClInclude Include="ZBufferCreationEffect.h" />
+    <ClInclude Include="WBufferCreationEffect.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DXErr.cpp" />

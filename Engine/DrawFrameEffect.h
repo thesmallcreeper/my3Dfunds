@@ -64,7 +64,7 @@ public:
 			if (stencil.get())
 				return colorTex;
 			else
-				return colorTex / 3.f;
+				return colorTex * 86;
 		}
 		void BindTexture(const std::wstring& filename)
 		{

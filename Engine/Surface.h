@@ -83,19 +83,19 @@ public:
 	}
 	void PutPixel( unsigned int x,unsigned int y,Color c )
 	{
-		assert( x >= 0 );
-		assert( y >= 0 );
-		assert( x < width );
-		assert( y < height );
+	//	assert( x >= 0 );
+	//	assert( y >= 0 );
+	//	assert( x < width );
+	//	assert( y < height );
 		pBuffer[y * pitch + x] = c;
 	}
 	void PutPixelAlpha( unsigned int x,unsigned int y,Color c );
 	Color GetPixel( unsigned int x,unsigned int y ) const
 	{
-		assert( x >= 0 );
-		assert( y >= 0 );
-		assert( x < width );
-		assert( y < height );
+	//	assert( x >= 0 );
+	//	assert( y >= 0 );
+	//	assert( x < width );
+	//	assert( y < height );
 		return pBuffer[y * pitch + x];
 	}
 	unsigned int GetWidth() const

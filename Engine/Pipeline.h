@@ -29,7 +29,7 @@ public:
 		gfx(gfx),
 		zb(zb),
 		sb(sb),
-		perspt(-1.155f, 1.155f, -0.65f, 0.65f, -1.0f, -40.0f),
+		perspt(-1.155f, 1.155f, -0.65f, 0.65f, -1.0f, -32.0f),
 		writeongfx(true),
 		turnfacing(false)
 	{}
@@ -69,27 +69,24 @@ public:
 private:
 	// vertex processing function
 	// transforms vertices using vs and then passes vtx & idx lists to triangle assembler
-	void ProcessVertices( std::vector<Vertex> vertices, std::vector<size_t> indices )
+	void ProcessVertices( const std::vector<Vertex>& vertices, const std::vector<size_t>& indices )
 	{
-		// transform vertices with VS
-		effect.vs(vertices, indices);
-
-		// assemble triangles from stream of indices and vertices
-		AssembleTriangles( vertices,indices );
+		// transform vertices with VS and assemble triangles from stream of indices and vertices
+		AssembleTriangles( effect.vs(vertices, indices) );
 	}
 	// triangle assembly function
 	// assembles indexed vertex stream into triangles and passes them to post process
 	// culls (does not send) back facing triangles
-	void AssembleTriangles(const std::vector<VSOut>& vertices, const std::vector<size_t>& indices)
+	void AssembleTriangles(const IndexedTriangleList<VSOut>& list)
 	{
 		// assemble triangles in the stream and process
-		for( size_t i = 0,end = indices.size() / 3;
+		for( size_t i = 0,end = list.indices.size() / 3;
 			 i < end; i++ )
 		{
 			// determine triangle vertices via indexing
-			VSOut v0 = vertices[indices[i * 3]];
-			VSOut v1 = vertices[indices[i * 3 + 1]];
-			VSOut v2 = vertices[indices[i * 3 + 2]];
+			VSOut v0 = list.vertices[list.indices[i * 3]];
+			VSOut v1 = list.vertices[list.indices[i * 3 + 1]];
+			VSOut v2 = list.vertices[list.indices[i * 3 + 2]];
 			// avoid backfacing culling if it is enabled
 			if (turnfacing)
 			{

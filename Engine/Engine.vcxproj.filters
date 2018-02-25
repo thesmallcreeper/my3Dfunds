@@ -129,12 +129,6 @@
     <ClInclude Include="PubeScreenTransformer.h">
       <Filter>Header Files\PipelineTools</Filter>
     </ClInclude>
-    <ClInclude Include="VertexWaveScene.h">
-      <Filter>Header Files\Scenes</Filter>
-    </ClInclude>
-    <ClInclude Include="WaveVertexTextureEffect.h">
-      <Filter>Header Files\Effects</Filter>
-    </ClInclude>
     <ClInclude Include="Plane.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -183,14 +177,20 @@
     <ClInclude Include="ShadowVolumesEffect1st.h">
       <Filter>Header Files\Effects\ShadowVolumes\Effects</Filter>
     </ClInclude>
+    <ClInclude Include="WBuffer.h">
+      <Filter>Header Files\PipelineTools</Filter>
+    </ClInclude>
     <ClInclude Include="ShadowVolumesVertexShader.h">
       <Filter>Header Files\Effects\ShadowVolumes</Filter>
     </ClInclude>
-    <ClInclude Include="ZBufferCreationEffect.h">
+    <ClInclude Include="DrawFrameWithPhongLightEffect.h">
       <Filter>Header Files\Effects\ShadowVolumes\Effects</Filter>
     </ClInclude>
-    <ClInclude Include="WBuffer.h">
-      <Filter>Header Files\PipelineTools</Filter>
+    <ClInclude Include="ShadowVolumesWithLightingScene.h">
+      <Filter>Header Files\Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="WBufferCreationEffect.h">
+      <Filter>Header Files\Effects\ShadowVolumes\Effects</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
