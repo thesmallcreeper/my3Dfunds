@@ -2,7 +2,6 @@
 
 #include <cmath>
 #include "Pipeline.h"
-#include "DefaultVertexShader.h"
 #include "VertexTypes.h"
 
 // basic texture effect
@@ -139,6 +138,14 @@ public:
 		{
 			ambientlight = ambientlight_in;
 		}
+		void BindShininess(const int& shininess_in)
+		{
+			shininess = shininess_in + 2;
+		}
+		void BindSpecularWeight(const float& specularweight_in)
+		{
+			specularweight = specularweight_in;
+		}
 
 		void BindTexture(const std::wstring& filename)
 		{
@@ -161,10 +168,16 @@ public:
 
 			if (stencil.get())
 			{
-				float Idiff = std::max(in.normal.GetNormalized() * in.tolightsrc.GetNormalized(), 0.f);
+				Vec3 normal(in.normal.GetNormalized());
+				Vec3 tolightNormal(in.tolightsrc.GetNormalized());
+				Vec3 toCameraNormal(-in.pos.GetNormalized());
+
+				float Idiff = std::max(normal * tolightNormal, 0.f);
+				float Ispec = powToPowOf2( std::max((tolightNormal + toCameraNormal).GetNormalized() * normal, 0.f) , shininess);
+
 				float d = 1.f / (in.tolightsrc.LenSq());
 				
-				light += Idiff * d * lightsourcedensity;
+				light += (Idiff + specularweight * Ispec) * d * lightsourcedensity;
 			}
 
 			light = std::min(light, 1.f);
@@ -183,6 +196,8 @@ public:
 		Color lightsourcecolor;
 		float lightsourcedensity;
 
+		int shininess;
+		float specularweight;
 		float ambientlight;
 	};
 public:

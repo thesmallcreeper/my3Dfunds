@@ -45,3 +45,11 @@ inline T interpolate( const T& src,const T& dst,float alpha )
 {
 	return src + (dst - src) * alpha;
 }
+
+template<typename T>
+inline T powToPowOf2(T number, size_t times)
+{
+	for (size_t i = 0; i < times; i++)
+		number *= number;
+	return number;
+}

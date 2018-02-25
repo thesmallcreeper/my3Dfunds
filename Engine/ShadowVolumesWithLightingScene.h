@@ -173,8 +173,10 @@ public:
 		pipelinedf.effect.gs.BindShader(itlistWithTextures.tc, itlistWithTextures.uvMapping);
 		// set pixel shade for pipelineDF
 		pipelinedf.effect.ps.BindLightSourcePosition({ 0.0f,10.0f,0.0f });
-		pipelinedf.effect.ps.BindLightSourceDesnity(120.f);
+		pipelinedf.effect.ps.BindLightSourceDesnity(80.f);
 		pipelinedf.effect.ps.BindAmbientLight(0.275f);
+		pipelinedf.effect.ps.BindShininess(4);
+		pipelinedf.effect.ps.BindSpecularWeight(1.2f);
 		// render triangles
 		pipelinewb.switchZBufferSet(true);
 		pipelinewb.switchZBufferEqualTest(false);
