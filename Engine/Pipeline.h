@@ -1,5 +1,9 @@
 #pragma once
 
+#include <algorithm>
+#include "ppl.h"
+#include "concrt.h"
+
 #include "ChiliWin.h"
 #include "Graphics.h"
 #include "Triangle.h"
@@ -11,7 +15,6 @@
 #include "WBuffer.h"
 #include "StencilBuffer.h"
 #include "ClippingToolkit.h"
-#include <algorithm>
 
 // triangle drawing pipeline with programable
 // pixel shading stage
@@ -32,7 +35,9 @@ public:
 		perspt(-1.155f, 1.155f, -0.65f, 0.65f, -1.0f, -32.0f),
 		writeongfx(true),
 		turnfacing(false)
-	{}
+	{
+		Concurrency::SchedulerPolicy sp(1, Concurrency::MaxConcurrency, 8);
+	}
 
 	void Draw( IndexedTriangleList<Vertex>& triList )
 	{
@@ -370,29 +375,33 @@ private:
 
 		// calculate start and end scanlines
 		const int yStart = (int)ceil( it0.pos.y - 0.5f );
-		const int yEnd = (int)ceil( it2.pos.y - 0.5f ); // the scanline AFTER the last line drawn
+		const int yEnd = (int)ceil( it2.pos.y - 0.5f );					// the scanline AFTER the last line drawn
 
 		// do interpolant prestep
 		itEdge0 += dv0 * (float( yStart ) + 0.5f - it0.pos.y);
 		itEdge1 += dv1 * (float( yStart ) + 0.5f - it0.pos.y);
 
-		for( int y = yStart; y < yEnd; y++,itEdge0 = dv0 + itEdge0,itEdge1 = dv1 + itEdge1)
+		Concurrency::parallel_for( 0, yEnd - yStart, [&](int t)
 		{
+			int y = t + yStart;
+
+			auto itEdgeLoop0 = dv0 * (float)t + itEdge0;
+			auto itEdgeLoop1 = dv1 * (float)t + itEdge1;
 			// calculate start and end pixels
-			const int xStart = (int)ceil( itEdge0.pos.x - 0.5f );
-			const int xEnd = (int)ceil( itEdge1.pos.x - 0.5f ); // the pixel AFTER the last pixel drawn
+			const int xStart = (int)ceil( itEdgeLoop0.pos.x - 0.5f );
+			const int xEnd = (int)ceil( itEdgeLoop1.pos.x - 0.5f ); // the pixel AFTER the last pixel drawn
 
 			// create scanline interpolant startpoint
 			// (some waste for interpolating x,y,z, but makes life easier not having
 			//  to split them off, and z will be needed in the future anyways...)
-			auto iLine = itEdge0;
+			auto iLine = itEdgeLoop0;
 
 			// calculate delta scanline interpolant / dx
-			const float dx = itEdge1.pos.x - itEdge0.pos.x;
-			const auto diLine = (itEdge1 - iLine) / dx;
+			const float dx = itEdgeLoop1.pos.x - itEdgeLoop0.pos.x;
+			const auto diLine = (itEdgeLoop1 - iLine) / dx;
 
 			// prestep scanline interpolant
-			iLine += diLine * (float( xStart ) + 0.5f - itEdge0.pos.x);
+			iLine += diLine * (float( xStart ) + 0.5f - itEdgeLoop0.pos.x);
 
 			for( int x = xStart; x < xEnd; x++,iLine = diLine + iLine)
 			{
@@ -415,7 +424,7 @@ private:
 						gfx.PutPixel(x, y, color);
 				}
 			}
-		}
+		}, Concurrency::static_partitioner());
 	}
 public:
 	Effect effect;
