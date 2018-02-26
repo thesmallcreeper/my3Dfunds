@@ -130,18 +130,21 @@ public:
 		:
 		normal(src.normal),
 		tolightsrc(src.tolightsrc),
+		tocamera(src.tocamera),
 		pos(pos)
 	{}
-	DefaultVertexWithPhong(const Vec3& pos, const Vec3& tolightsrc, const Vec3& normal)
+	DefaultVertexWithPhong(const Vec3& pos, const Vec3& tolightsrc, const Vec3& tocamera, const Vec3& normal)
 		:
 		normal(normal),
 		tolightsrc(tolightsrc),
+		tocamera(tocamera),
 		pos(pos)
 	{}
 	DefaultVertexWithPhong& operator+=(const DefaultVertexWithPhong& rhs)
 	{
 		pos += rhs.pos;
 		tolightsrc += rhs.tolightsrc;
+		tocamera += rhs.tocamera;
 		normal += rhs.normal;
 		return *this;
 	}
@@ -153,6 +156,7 @@ public:
 	{
 		pos -= rhs.pos;
 		tolightsrc -= rhs.tolightsrc;
+		tocamera -= rhs.tocamera;
 		normal -= rhs.normal;
 		return *this;
 	}
@@ -164,6 +168,7 @@ public:
 	{
 		pos *= rhs;
 		tolightsrc *= rhs;
+		tocamera *= rhs;
 		normal *= rhs;
 		return *this;
 	}
@@ -176,6 +181,7 @@ public:
 		pos /= rhs;
 		tolightsrc /= rhs;
 		normal /= rhs;
+		tocamera /= rhs;
 		return *this;
 	}
 	DefaultVertexWithPhong operator/(float rhs) const
@@ -185,6 +191,7 @@ public:
 public:
 	Vec3 pos;
 	Vec3 tolightsrc;
+	Vec3 tocamera;
 	Vec3 normal;
 };
 
@@ -203,17 +210,19 @@ public:
 		tolightsrc(src.tolightsrc),
 		pos(pos)
 	{}
-	DefaultVertexWithPhongAndTC(const Vec3& pos, const Vec3& tolightsrc, const Vec3& normal, const Vec2& t)
+	DefaultVertexWithPhongAndTC(const Vec3& pos, const Vec3& tolightsrc, const Vec3& tocamera, const Vec3& normal, const Vec2& t)
 		:
 		t(t),
 		normal(normal),
 		tolightsrc(tolightsrc),
+		tocamera(tocamera),
 		pos(pos)
 	{}
 	DefaultVertexWithPhongAndTC& operator+=(const DefaultVertexWithPhongAndTC& rhs)
 	{
 		pos += rhs.pos;
 		tolightsrc += rhs.tolightsrc;
+		tocamera += rhs.tocamera;
 		normal += rhs.normal;
 		t += rhs.t;
 		return *this;
@@ -226,6 +235,7 @@ public:
 	{
 		pos -= rhs.pos;
 		tolightsrc -= rhs.tolightsrc;
+		tocamera -= rhs.tocamera;
 		normal -= rhs.normal;
 		t -= rhs.t;
 		return *this;
@@ -238,6 +248,7 @@ public:
 	{
 		pos *= rhs;
 		tolightsrc *= rhs;
+		tocamera *= rhs;
 		normal *= rhs;
 		t *= rhs;
 		return *this;
@@ -250,6 +261,7 @@ public:
 	{
 		pos /= rhs;
 		tolightsrc /= rhs;
+		tocamera /= rhs;
 		normal /= rhs;
 		t /= rhs;
 		return *this;
@@ -261,6 +273,7 @@ public:
 public:
 	Vec3 pos;
 	Vec3 tolightsrc;
+	Vec3 tocamera;
 	Vec3 normal;
 	Vec2 t;
 };

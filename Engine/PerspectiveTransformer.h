@@ -7,11 +7,11 @@ class PerspectiveTransformer
 {
 public:
 	PerspectiveTransformer(float l = -1.0f, float r = 1.0f, float b = -1.0f, float t = 1.0f, float n = -1.0f, float f = -5.0f) {
-		persMat = { 2 * n / (r - l)	, 0					, -(r + l) / (r - l),
-					0				, 2 * n / (t - b)	, -(t + b) / (t - b),
-					0				, 0					,  (f + n) / (f - n)};
+		persMat = { 2 * n / (r - l)	, 0.f				, -(r + l) / (r - l),
+					0.f				, 2 * n / (t - b)	, -(t + b) / (t - b),
+					0.f				, 0.f				,  (f + n) / (f - n)};
 
-		persVec = { 0				, 0					, -2 * f * n / (f - n) };
+		persVec = { 0.f				, 0.f				, -2 * f * n / (f - n) };
 
 	}
 

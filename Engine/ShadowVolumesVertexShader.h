@@ -48,8 +48,7 @@ public:
 			[&](const auto& lambdain) -> Vertex
 		{
 			Vec3 direction(lambdain.pos.x - lightsourceposition_use.x, lambdain.pos.y - lightsourceposition_use.y, lambdain.pos.z - lightsourceposition_use.z);
-			direction.Normalize();
-			Vertex result(direction * 64 + lightsourceposition_use);
+			Vertex result(direction.GetNormalized() * 64 + lightsourceposition_use);
 			return result;
 		});
 

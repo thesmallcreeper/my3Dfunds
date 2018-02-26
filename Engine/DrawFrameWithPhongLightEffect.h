@@ -68,7 +68,7 @@ public:
 
 			for (size_t i = 0; i < vertices_in.size(); i++)
 			{
-				VertexWithPhong toPushBack(vertices_in[i].pos, lightsourceposition_use - vertices_in[i].pos, vertices_normals[i].GetNormalized());
+				VertexWithPhong toPushBack(vertices_in[i].pos, lightsourceposition_use - vertices_in[i].pos, -vertices_in[i].pos, vertices_normals[i].GetNormalized());
 				vertices_out.push_back(toPushBack);
 			}
 
@@ -103,9 +103,9 @@ public:
 		template<class Vertex>
 		Triangle<Output> operator()(const Vertex& in0, const Vertex& in1, const Vertex& in2, size_t triangle_index)
 		{
-			VertexWithPhongAndTC out0(in0.pos, in0.tolightsrc, in0.normal, tc[uvMapping[triangle_index * 3]]);
-			VertexWithPhongAndTC out1(in1.pos, in1.tolightsrc, in1.normal, tc[uvMapping[triangle_index * 3 + 1]]);
-			VertexWithPhongAndTC out2(in2.pos, in2.tolightsrc, in2.normal, tc[uvMapping[triangle_index * 3 + 2]]);
+			VertexWithPhongAndTC out0(in0.pos, in0.tolightsrc, in0.tocamera, in0.normal, tc[uvMapping[triangle_index * 3]]);
+			VertexWithPhongAndTC out1(in1.pos, in1.tolightsrc, in1.tocamera, in1.normal, tc[uvMapping[triangle_index * 3 + 1]]);
+			VertexWithPhongAndTC out2(in2.pos, in2.tolightsrc, in2.tocamera, in2.normal, tc[uvMapping[triangle_index * 3 + 2]]);
 			return{ out0, out1, out2 };
 		}
 
@@ -170,13 +170,13 @@ public:
 			{
 				Vec3 normal(in.normal.GetNormalized());
 				Vec3 tolightNormal(in.tolightsrc.GetNormalized());
-				Vec3 toCameraNormal(-in.pos.GetNormalized());
-
-				float Idiff = std::max(normal * tolightNormal, 0.f);
-				float Ispec = powToPowOf2( std::max((tolightNormal + toCameraNormal).GetNormalized() * normal, 0.f) , shininess);
-
-				float d = 1.f / (in.tolightsrc.LenSq());
+				Vec3 tocameraNormal(in.tocamera.GetNormalized());
 				
+				float Idiff = std::max(normal * tolightNormal, 0.f);
+				float Ispec = powToPowOf2((tolightNormal + tocameraNormal).GetNormalized() * normal, shininess);
+				
+				float d = 1.f / (in.tolightsrc.LenSq());
+
 				light += (Idiff + specularweight * Ispec) * d * lightsourcedensity;
 			}
 

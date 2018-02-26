@@ -9,7 +9,7 @@ public:
 		:
 		width(width),
 		height(height),
-		pBuffer(new __int16[width*height])
+		pBuffer(new __int8[width*height])
 	{}
 	~StencilBuffer()
 	{
@@ -21,7 +21,7 @@ public:
 	void Clear()
 	{
 		const int nStencils = width * height;
-		memset(pBuffer, 0, nStencils * sizeof(__int16));
+		memset(pBuffer, 0, nStencils * sizeof(__int8));
 	}
 	bool At(int x, int y)
 	{
@@ -51,7 +51,7 @@ public:
 private:
 	int width;
 	int height;
-	__int16* pBuffer = nullptr;
+	__int8* pBuffer = nullptr;
 };
 
 class StencilBufferPtr 

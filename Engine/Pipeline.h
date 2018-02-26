@@ -376,7 +376,7 @@ private:
 		itEdge0 += dv0 * (float( yStart ) + 0.5f - it0.pos.y);
 		itEdge1 += dv1 * (float( yStart ) + 0.5f - it0.pos.y);
 
-		for( int y = yStart; y < yEnd; y++,itEdge0 += dv0,itEdge1 += dv1 )
+		for( int y = yStart; y < yEnd; y++,itEdge0 = dv0 + itEdge0,itEdge1 = dv1 + itEdge1)
 		{
 			// calculate start and end pixels
 			const int xStart = (int)ceil( itEdge0.pos.x - 0.5f );
@@ -394,7 +394,7 @@ private:
 			// prestep scanline interpolant
 			iLine += diLine * (float( xStart ) + 0.5f - itEdge0.pos.x);
 
-			for( int x = xStart; x < xEnd; x++,iLine += diLine )
+			for( int x = xStart; x < xEnd; x++,iLine = diLine + iLine)
 			{
 				// do w rejection / update of w buffer
 				// skip shading step if w rejected (early w)
