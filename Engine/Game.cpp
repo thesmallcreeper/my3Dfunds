@@ -33,7 +33,7 @@ Game::Game( MainWindow& wnd )
 	wnd( wnd ),
 	gfx( wnd )
 {
-	scenes.push_back(std::make_unique<ShadowVolumesWithLightingScene>(gfx, L"Objects\\q3rocket.obj", L"images\\rocketl3.jpg", 0.25f));
+	scenes.push_back(std::make_unique<ShadowVolumesWithLightingScene>(gfx, L"Objects\\q3rocket.obj", L"images\\rocketl.jpg", 0.25f));
 	scenes.push_back(std::make_unique<ShadowVolumesScene>(gfx, L"Objects\\q3rocket.obj", L"images\\rocketl.jpg", 0.25f));
 //	scenes.push_back(std::make_unique<CubeSkinFromObjScene>(gfx, L"Objects\\q3rocket.obj", L"images\\rocketl.jpg" , 0.25f));
 	scenes.push_back(std::make_unique<CubeSkinFromObjSceneWithGS>(gfx, L"Objects\\q3rocket.obj", L"images\\rocketl.jpg", 0.25f));
