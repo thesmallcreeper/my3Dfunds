@@ -51,7 +51,7 @@ public:
 	}
 	float	Len() const
 	{
-		return sqrt(LenSq());
+		return (float) sqrt(LenSq());
 	}
 	Vec3&	Normalize()
 	{
